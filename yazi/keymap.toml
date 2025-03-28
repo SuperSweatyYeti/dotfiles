@@ -1,0 +1,9 @@
+[manager]
+prepend_keymap = [
+	{ on = "<C-h>", run = 'hidden toggle', desc = "Toggle hidden files" },
+	{ on = "?", run = 'help', desc = "Get help" },
+]
+[help]
+prepend_keymap = [
+	{ on = "/", run = 'filter', desc = "Filter" },
+]

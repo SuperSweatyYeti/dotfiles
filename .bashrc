@@ -61,13 +61,24 @@ fz() (
       --preview-window '~4,+{2}+4/3,<80(up)'
 )
 
-
 alias cdfz='cd $(find . -type d -print | fzf ) '
-
-#alias fz='fzf --bind "ctrl-o:become:$EDITOR" --preview="bat --color=always {}" '
 
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --bash)"
+
+
+
+
+# Yazi config
+yaz() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
 
 #alias btop="bpytop"
 #alias ld="lsd"
