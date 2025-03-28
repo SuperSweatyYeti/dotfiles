@@ -18,7 +18,7 @@ git clone https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
 # Other Recommended dependencies to install
 
 ```bash
-sudo dnf install fzf fd ripgrep
+sudo dnf install fzf fd-find ripgrep
 ```
 
 Install brew for other apps like [ yazi ]( https://github.com/sxyazi/yazi  )( Best terminal file manager right now )
