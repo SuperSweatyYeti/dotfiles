@@ -87,9 +87,33 @@ cdy() {
 
 EDITOR='nvim'
 
-PS1="\n┌─ $(tput setaf 46)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n└─╼ \$ "
-#PS1="\n┌─ $(tput setaf 115)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n└─╼ \$ "
 
-force_color_prompt=yes
+# PS1 Prompt
+#PS1="\n┌─ $(tput setaf 46)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n└─╼ \$ "
+# Old Custom
+#PS1="\n┌─ $(tput bold; tput setaf 75)\u$(tput sgr0)@$(tput bold; tput setaf 176)\h$(tput sgr0) \[$(tput bold; tput setaf 116)\]\w\[$(tput sgr0)\] \n└─╼ \$ "
 
+# # Tokyo Night
+# # Define colors using termcap (tput alternative)
+# COLOR1=$(tput bold; tput setaf 75)   # Cyan (User)
+# COLOR2=$(tput bold; tput setaf 13)   # Magenta (Host)
+# COLOR3=$(tput bold; tput setaf 75)   # Teal (Directory)
+# COLOR4=$(tput bold; tput setaf 178)  # Yellow (At @ symbol)
+# RESET=$(tput sgr0)
+#
+# # Set the PS1 prompt
+# PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+
+# Catppuccin Mocha 
+# Define colors using termcap (tput alternative)
+COLOR1=$(tput bold; tput setaf 75)   # Blue (User)
+COLOR2=$(tput bold; tput setaf 176)  # Pink (Host)
+COLOR3=$(tput bold; tput setaf 116)  # Teal (Directory)
+COLOR4=$(tput bold; tput setaf 215)  # Bright Yellow-Orange (@ symbol)
+RESET=$(tput sgr0)
+
+# Set the PS1 prompt
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+
+# linux homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
