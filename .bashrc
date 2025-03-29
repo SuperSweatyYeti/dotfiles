@@ -27,9 +27,25 @@ unset rc
 
 ######## Custom
 #alias lf="lfrun"
+
+# Set Default Editor
+if [[ $(command -v nvim &> /dev/null) -eq $TRUE ]] ; then
+EDITOR='nvim'
+elif [[ $(command -v vim &> /dev/null) -eq $TRUE ]] ; then
+EDITOR='vim'
+else
+    : # Do nothing
+fi
+
+# If lsd is installed then use that for nicer listings
+if [[ $(command -v lsd &> /dev/null) -eq $TRUE ]] ; then
+alias ls="lsd"
+alias ll="lsd -al"
+fi
+
 alias ranger=". ranger"
-alias ll="ls -al"
 alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
+#alias btop="bpytop"
 
 
 # fzf config
@@ -81,16 +97,11 @@ cdy() {
 }
 
 
-#alias btop="bpytop"
-#alias ld="lsd"
-#alias lld="lsd -al"
-
-EDITOR='nvim'
 
 
+# Old Custom prompts
 # PS1 Prompt
 #PS1="\n┌─ $(tput setaf 46)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n└─╼ \$ "
-# Old Custom
 #PS1="\n┌─ $(tput bold; tput setaf 75)\u$(tput sgr0)@$(tput bold; tput setaf 176)\h$(tput sgr0) \[$(tput bold; tput setaf 116)\]\w\[$(tput sgr0)\] \n└─╼ \$ "
 
 # # Tokyo Night
