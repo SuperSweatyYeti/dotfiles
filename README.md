@@ -9,10 +9,17 @@ install with whatever package manager
 sudo dnf install git stow gcc
 ```
 
-# Install
+# Download repo
 
 ```bash
 git clone https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
+```
+
+# Install
+
+```bash
+cd ~/dotfiles
+stow . --ignore="setup\.sh"
 ```
 
 # Other Recommended dependencies to install
