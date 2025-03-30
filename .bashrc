@@ -28,6 +28,7 @@ unset rc
 #alias lf="lfrun"
 
 # Set Default Editor
+# If nvim exists then set alias
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
 	EDITOR='nvim'
 elif ! [[ $(command -v vim &>/dev/null) ]]; then
@@ -49,7 +50,7 @@ alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.
 #alias btop="bpytop"
 
 # fzf function IF fzf is installed
-if [[ $(command -v fzf &>/dev/null) ]]; then
+if ! [[ $(command -v fzf &>/dev/null) ]]; then
 # fzf config
 # # ripgrep->fzf->nvim [QUERY]
 # fuzzy ripgrep search to enter with nvim ctrl + o
@@ -82,7 +83,11 @@ fz() (
 alias cdfz='cd $(find . -type d -print | fzf ) '
 
 # Set up fzf key bindings and fuzzy completion
-eval "$(fzf --bash)"
+# depeding on installation fzf --bash won't be neccessary
+if  [[ $(command -v "fzf --bash" &>/dev/null) ]]; then
+	eval "$(fzf --bash )"
+fi
+
 fi
 
 # Yazi config
@@ -157,6 +162,7 @@ RESET=$(tput sgr0)
 PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
 
 # linux homebrew
+# Only IF brew is installed
 if ! [[ $(command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null) ]]; then
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
