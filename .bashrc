@@ -109,6 +109,24 @@ cdy() {
 # # Set the PS1 prompt
 # PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
+# Function to get Git branch and status
+git_prompt() {
+	local branch
+	branch="$(git symbolic-ref HEAD 2>/dev/null | cut -d'/' -f3-)"
+	local branch_truncated="${branch:0:30}"
+	if ((${#branch} > ${#branch_truncated})); then
+		branch="${branch_truncated}..."
+	fi
+
+	[ -n "${branch}" ] && echo " (${branch}) ↔️"
+}
+
+git_basename() {
+	REPO_NAME="$(git remote show -n origin 2>/dev/null | grep Fetch | cut -d: -f2-)"
+	REPO_BASENAME="$(basename "$REPO_NAME")"
+	[ -n "${REPO_BASENAME}" ] && echo "$REPO_BASENAME"
+}
+
 # Catppuccin Mocha
 # Define colors using termcap (tput alternative)
 COLOR1=$(
@@ -130,7 +148,7 @@ COLOR4=$(
 RESET=$(tput sgr0)
 
 # Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_basename) \n└─╼ \$ "
 
 # linux homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
