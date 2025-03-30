@@ -5,8 +5,14 @@ stow
 gcc
 
 install with whatever package manager
+
+Fedora
 ```bash
-sudo dnf install git stow gcc
+sudo dnf install git stow gcc unzip fzf fd-find ripgrep -y
+```
+Ubuntu
+```bash
+sudo apt install git stow gcc build-essentials unzip fzf fd-find ripgrep -y
 ```
 
 # Download repo

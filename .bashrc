@@ -154,6 +154,6 @@ RESET=$(tput sgr0)
 PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_repo_name) \n└─╼ \$ "
 
 # linux homebrew
-if [[ $(command -v /home/linuxbrew/.linuxbrew/bin/brew &>/dev/null) ]]; then
+if ! [[ $(command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null) ]]; then
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
