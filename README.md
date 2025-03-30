@@ -15,7 +15,7 @@ Ubuntu
 sudo apt install git stow gcc build-essentials unzip fzf fd-find ripgrep -y
 ```
 
-# Download repo
+# Download repo with submodules
 
 ```bash
 git clone --recurse-submodules https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
