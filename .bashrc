@@ -133,13 +133,14 @@ git_prompt() {
 
     # Check if there are uncommitted changes
     if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
-        color=$(tput setaf 46)  # Green (Clean repo)
+        color=$(tput setaf 114)  # Soft Green (Clean repo)
     else
-        color=$(tput setaf 226) # Yellow (Uncommitted changes)
+        color=$(tput setaf 185)  # Soft Yellow (Uncommitted changes)
     fi
 
     echo " ( ${color} ${branch}${RESET} )"
 }
+
 
 
 git_repo_name() {
