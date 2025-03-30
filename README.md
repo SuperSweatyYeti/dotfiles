@@ -20,6 +20,10 @@ git clone https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
 ```bash
 cd ~/dotfiles
 stow . --ignore="setup\.sh"
+git submodule init
+git submodule update
+cd ~/dotfiles/.config/nvim
+git checkout master
 ```
 
 # Other Recommended dependencies to install

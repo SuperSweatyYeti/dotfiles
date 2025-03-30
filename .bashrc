@@ -28,16 +28,16 @@ unset rc
 #alias lf="lfrun"
 
 # Set Default Editor
-if [[ $(command -v nvim &>/dev/null) -eq $TRUE ]]; then
+if [[ $(command -v nvim &>/dev/null) ]]; then
 	EDITOR='nvim'
-elif [[ $(command -v vim &>/dev/null) -eq $TRUE ]]; then
+elif [[ $(command -v vim &>/dev/null) ]]; then
 	EDITOR='vim'
 else
 	: # Do nothing
 fi
 
 # If lsd is installed then use that for nicer listings
-if [[ $(command -v lsd &>/dev/null) -eq $TRUE ]]; then
+if [[ $(command -v lsd &>/dev/null) ]]; then
 	alias ls="lsd"
 	alias ll="lsd -al"
 else
@@ -48,6 +48,8 @@ alias ranger=". ranger"
 alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
 #alias btop="bpytop"
 
+# fzf function IF fzf is installed
+if [[ $(command -v fzf &>/dev/null) ]]; then
 # fzf config
 # # ripgrep->fzf->nvim [QUERY]
 # fuzzy ripgrep search to enter with nvim ctrl + o
@@ -81,6 +83,7 @@ alias cdfz='cd $(find . -type d -print | fzf ) '
 
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --bash)"
+fi
 
 # Yazi config
 # cd into directory when leaving yazi
@@ -151,4 +154,6 @@ RESET=$(tput sgr0)
 PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_repo_name) \n└─╼ \$ "
 
 # linux homebrew
+if [[ $(command -v /home/linuxbrew/.linuxbrew/bin/brew &>/dev/null) ]]; then
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
