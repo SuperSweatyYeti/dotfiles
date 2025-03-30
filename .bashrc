@@ -115,16 +115,32 @@ cdy() {
 # PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
 # Function to get Git branch and status
+# git_prompt() {
+# 	local branch
+# 	branch="$(git symbolic-ref HEAD 2>/dev/null | cut -d'/' -f3-)"
+# 	local branch_truncated="${branch:0:30}"
+# 	if ((${#branch} > ${#branch_truncated})); then
+# 		branch="${branch_truncated}..."
+# 	fi
+#
+# 	[ -n "${branch}" ] && echo " (  ${branch} )"
+# }
+# Function to get Git branch and status
+# Function to get Git branch and change color based on status
 git_prompt() {
-	local branch
-	branch="$(git symbolic-ref HEAD 2>/dev/null | cut -d'/' -f3-)"
-	local branch_truncated="${branch:0:30}"
-	if ((${#branch} > ${#branch_truncated})); then
-		branch="${branch_truncated}..."
-	fi
+    local branch color
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
 
-	[ -n "${branch}" ] && echo " (  ${branch} )"
+    # Check if there are uncommitted changes
+    if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
+        color=$(tput setaf 46)  # Green (Clean repo)
+    else
+        color=$(tput setaf 226) # Yellow (Uncommitted changes)
+    fi
+
+    echo " ( ${color} ${branch}${RESET} )"
 }
+
 
 git_repo_name() {
 	REPO_NAME="$(git remote show -n origin 2>/dev/null | grep Fetch | cut -d: -f2-)"
