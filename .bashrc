@@ -28,9 +28,9 @@ unset rc
 #alias lf="lfrun"
 
 # Set Default Editor
-if [[ $(command -v nvim &>/dev/null) ]]; then
+if ! [[ $(command -v nvim &>/dev/null) ]]; then
 	EDITOR='nvim'
-elif [[ $(command -v vim &>/dev/null) ]]; then
+elif ! [[ $(command -v vim &>/dev/null) ]]; then
 	EDITOR='vim'
 else
 	: # Do nothing
