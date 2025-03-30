@@ -30,6 +30,7 @@ unset rc
 # Set Default Editor
 # If nvim exists then set alias
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
+	alias vim='nvim'
 	EDITOR='nvim'
 elif ! [[ $(command -v vim &>/dev/null) ]]; then
 	EDITOR='vim'
@@ -45,7 +46,6 @@ else
 	alias ll="ls -al"
 fi
 
-alias ranger=". ranger"
 alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
 #alias btop="bpytop"
 
@@ -126,14 +126,20 @@ git_prompt() {
 		branch="${branch_truncated}..."
 	fi
 
-	[ -n "${branch}" ] && echo " (${branch}) ↔️"
+	[ -n "${branch}" ] && echo " (${branch}) "
 }
 
 git_repo_name() {
 	REPO_NAME="$(git remote show -n origin 2>/dev/null | grep Fetch | cut -d: -f2-)"
 	REPO_BASENAME="$(basename "$REPO_NAME")"
-	[ -n "${REPO_BASENAME}" ] && echo "$REPO_BASENAME"
+	[ -n "${REPO_BASENAME}" ] && echo "($REPO_BASENAME)"
 }
+
+# IF lazygit is installed then make an alias for it
+if ! [[ $(command -v "lazygit" &>/dev/null) ]]; then
+	alias lg='lazygit'
+fi
+
 
 # Catppuccin Mocha
 # Define colors using termcap (tput alternative)
