@@ -24,9 +24,6 @@ if [ -d ~/.bashrc.d ]; then
 fi
 unset rc
 
-######## Custom
-#alias lf="lfrun"
-
 # Set Default Editor
 # If nvim exists then set alias
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
@@ -126,7 +123,7 @@ git_prompt() {
 		branch="${branch_truncated}..."
 	fi
 
-	[ -n "${branch}" ] && echo " (${branch}) "
+	[ -n "${branch}" ] && echo " (  ${branch} )"
 }
 
 git_repo_name() {
