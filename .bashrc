@@ -148,10 +148,13 @@ COLOR4=$(
 	tput bold
 	tput setaf 215
 ) # Bright Yellow-Orange (@ symbol)
+COLOR5=$(
+	tput bold
+) # Bright Yellow-Orange (@ symbol)
 RESET=$(tput sgr0)
 
 # Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_repo_name) \n└─╼ \$ "
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
 
 # linux homebrew
 if ! [[ $(command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null) ]]; then
