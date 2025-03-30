@@ -121,7 +121,7 @@ git_prompt() {
 	[ -n "${branch}" ] && echo " (${branch}) ↔️"
 }
 
-git_basename() {
+git_repo_name() {
 	REPO_NAME="$(git remote show -n origin 2>/dev/null | grep Fetch | cut -d: -f2-)"
 	REPO_BASENAME="$(basename "$REPO_NAME")"
 	[ -n "${REPO_BASENAME}" ] && echo "$REPO_BASENAME"
@@ -148,7 +148,7 @@ COLOR4=$(
 RESET=$(tput sgr0)
 
 # Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_basename) \n└─╼ \$ "
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \$(git_prompt)\$(git_repo_name) \n└─╼ \$ "
 
 # linux homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
