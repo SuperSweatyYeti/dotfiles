@@ -37,7 +37,7 @@ else
 fi
 
 # If lsd is installed then use that for nicer listings
-if [[ $(command -v lsd &>/dev/null) ]]; then
+if ! [[ $(command -v lsd &>/dev/null) ]]; then
 	alias ls="lsd"
 	alias ll="lsd -al"
 else
