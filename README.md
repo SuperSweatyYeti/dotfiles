@@ -18,17 +18,20 @@ sudo apt install git stow gcc build-essentials unzip fzf fd-find ripgrep -y
 # Download repo
 
 ```bash
-git clone https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
+git clone --recurse-submodules https://github.com/SuperSweatyYeti/dotfiles.git ~/dotfiles
 ```
 
 # Install
 
 ```bash
 cd ~/dotfiles
-stow . --ignore="setup\.sh"
+# Init and download the submodules
 git submodule init
 git submodule update
+# Checkout the master branches for each submodule
 cd ~/dotfiles/.config/nvim
+git checkout master
+cd ~/dotfiles/.config/tmux/plugins/tmp
 git checkout master
 ```
 
