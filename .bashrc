@@ -39,11 +39,11 @@ fi
 
 # another comment
 # Editing files as sudo
-# IF we are ubuntu  
-if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu"  &>/dev/null) ]]; then
+# IF we are ubuntu
+if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 # IF we are Debian
-elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian"  &>/dev/null) ]]; then
+elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 else
 	: # do nothing
@@ -169,6 +169,8 @@ if ! [[ $(command -v git &>/dev/null) ]]; then
 		# Get the repository name by parsing the git remote URL
 		git remote get-url origin 2>/dev/null | sed -E 's/.*[:\/]([^\/]+)\/([^\/]+).*/\2/'
 	}
+	# Set Bash prompt
+	PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
 
 fi
 
@@ -201,7 +203,7 @@ COLOR5=$(
 RESET=$(tput sgr0)
 
 # Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
 # linux homebrew
 # Only IF brew is installed
