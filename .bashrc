@@ -43,14 +43,15 @@ if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; the
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
-		source /usr/share/doc/fzf/examples/key-bindings.bash
+		source /usr/share/fzf/shell/key-bindings.bash
+		
 	fi
 # IF we are Debian
 elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
-		source /usr/share/doc/fzf/examples/key-bindings.bash
+		source /usr/share/fzf/shell/key-bindings.bash
 	fi
 else
 	: # do nothing
