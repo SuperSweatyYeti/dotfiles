@@ -146,6 +146,11 @@ fi
 # 	[ -n "${branch}" ] && echo " (  ${branch} )"
 # }
 
+
+
+# Set the PS1 prompt
+PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+
 # Add some nice git status to the prompt ONLY if git is installed
 if ! [[ $(command -v git &>/dev/null) ]]; then
 
@@ -202,8 +207,6 @@ COLOR5=$(
 ) # Bright Yellow-Orange (@ symbol)
 RESET=$(tput sgr0)
 
-# Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
 # linux homebrew
 # Only IF brew is installed
