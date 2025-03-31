@@ -37,14 +37,21 @@ else
 	: # Do nothing
 fi
 
-# another comment
-# Editing files as sudo
+# Distro Specific settings
 # IF we are ubuntu
 if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
+	# IF fzf is installed then
+	if ! [[ $(command -v fzf &>/dev/null) ]]; then
+		source /usr/share/doc/fzf/examples/key-bindings.bash
+	fi
 # IF we are Debian
 elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
+	# IF fzf is installed then
+	if ! [[ $(command -v fzf &>/dev/null) ]]; then
+		source /usr/share/doc/fzf/examples/key-bindings.bash
+	fi
 else
 	: # do nothing
 fi
@@ -60,7 +67,6 @@ fi
 if ! [[ $(command -v "kf5-config --version" &>/dev/null) ]]; then
 	alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
 fi
-#alias btop="bpytop"
 
 # fzf function IF fzf is installed
 if ! [[ $(command -v fzf &>/dev/null) ]]; then
@@ -81,7 +87,6 @@ if ! [[ $(command -v fzf &>/dev/null) ]]; then
 			--preview-window '~4,+{2}+4/3,<80(up)' \
 			--query "$*"
 	}
-	# fuzzy search to enter with nvim ctrl + o
 
 	fz() {
 		fzf --ansi \
@@ -96,7 +101,7 @@ if ! [[ $(command -v fzf &>/dev/null) ]]; then
 	alias cdfz='cd $(find . -type d -print | fzf ) '
 
 	# Set up fzf key bindings and fuzzy completion
-	# depeding on installation fzf --bash won't be neccessary
+	# depending on installation "fzf --bash" won't be neccessary
 	if [[ $(command -v "fzf --bash" &>/dev/null) ]]; then
 		eval "$(fzf --bash)"
 	fi
@@ -169,7 +174,6 @@ COLOR5=$(
 ) # Bright Yellow-Orange (@ symbol)
 RESET=$(tput sgr0)
 
-
 # Set the PS1 prompt
 PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
@@ -179,69 +183,68 @@ if ! [[ $(command -v git &>/dev/null) ]]; then
 	# Function to get Git branch and status
 	# Function to get Git branch and change color based on status
 	git_prompt() {
-    local branch color modified_files staged_files unstaged_files stash_count behind_count ahead_count prompt
+		local branch color modified_files staged_files unstaged_files stash_count behind_count ahead_count prompt
 
-    # Get the current branch
-    branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
+		# Get the current branch
+		branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
 
-    # Count of staged files (modified or added but not committed yet)
-    staged_files=$(git status --short 2>/dev/null | grep -c "^[AM]")
+		# Count of staged files (modified or added but not committed yet)
+		staged_files=$(git status --short 2>/dev/null | grep -c "^[AM]")
 
-    # Count of unstaged files (modified but not added to the staging area)
-    unstaged_files=$(git status --short 2>/dev/null | grep -c "^ M")
+		# Count of unstaged files (modified but not added to the staging area)
+		unstaged_files=$(git status --short 2>/dev/null | grep -c "^ M")
 
-    # Count of modified files (staged or unstaged)
-    modified_files=$((staged_files + unstaged_files))
+		# Count of modified files (staged or unstaged)
+		modified_files=$((staged_files + unstaged_files))
 
-    # Check for stashes
-    stash_count=$(git stash list 2>/dev/null | wc -l)
+		# Check for stashes
+		stash_count=$(git stash list 2>/dev/null | wc -l)
 
-    # Check if the local branch is behind or ahead of the remote
-    behind_count=$(git rev-list --left-only --count HEAD...origin/"$branch" 2>/dev/null)
-    ahead_count=$(git rev-list --right-only --count HEAD...origin/"$branch" 2>/dev/null)
+		# Check if the local branch is behind or ahead of the remote
+		behind_count=$(git rev-list --left-only --count HEAD...origin/"$branch" 2>/dev/null)
+		ahead_count=$(git rev-list --right-only --count HEAD...origin/"$branch" 2>/dev/null)
 
-    # Set colors based on repo status
-    if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
-        color=$(tput setaf 114)  # Soft Green (Clean repo)
-    else
-        color=$(tput setaf 185)  # Soft Yellow (Uncommitted changes)
-    fi
+		# Set colors based on repo status
+		if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
+			color=$(tput setaf 114) # Soft Green (Clean repo)
+		else
+			color=$(tput setaf 185) # Soft Yellow (Uncommitted changes)
+		fi
 
-    # Initialize the prompt string
-    prompt=" ${color} ${branch}${RESET}"
+		# Initialize the prompt string
+		prompt=" ${color} ${branch}${RESET}"
 
-    # Add the number of modified files with the page icon (󰷉)
-    if [ "$modified_files" -gt 0 ]; then
-        prompt="${prompt} ${modified_files}󰷉"
-    fi
+		# Add the number of modified files with the page icon (󰷉)
+		if [ "$modified_files" -gt 0 ]; then
+			prompt="${prompt} ${modified_files}󰷉"
+		fi
 
-    # Add the number of staged files with the check mark icon (✔️)
-    if [ "$staged_files" -gt 0 ]; then
-        prompt="${prompt} ${staged_files}✔️"
-    fi
+		# Add the number of staged files with the check mark icon (✔️)
+		if [ "$staged_files" -gt 0 ]; then
+			prompt="${prompt} ${staged_files}✔️"
+		fi
 
-    # Add the number of unstaged files with the reload/refresh icon (󰜞)
-    if [ "$unstaged_files" -gt 0 ]; then
-        prompt="${prompt} ${unstaged_files}󰜞"
-    fi
+		# Add the number of unstaged files with the reload/refresh icon (󰜞)
+		if [ "$unstaged_files" -gt 0 ]; then
+			prompt="${prompt} ${unstaged_files}󰜞"
+		fi
 
-    # Add the number of stashes with the package icon (📦)
-    if [ "$stash_count" -gt 0 ]; then
-        prompt="${prompt} ${stash_count}📦"
-    fi
+		# Add the number of stashes with the package icon (📦)
+		if [ "$stash_count" -gt 0 ]; then
+			prompt="${prompt} ${stash_count}📦"
+		fi
 
-    # Add behind and ahead status with icons
-    if [ "$behind_count" -gt 0 ]; then
-	    prompt="${prompt} ${behind_count}(Ahead)"
-    fi
-    if [ "$ahead_count" -gt 0 ]; then
-	    prompt="${prompt} ${ahead_count}(Behind)"
-    fi
+		# Add behind and ahead status with icons
+		if [ "$behind_count" -gt 0 ]; then
+			prompt="${prompt} ${behind_count}(Ahead)"
+		fi
+		if [ "$ahead_count" -gt 0 ]; then
+			prompt="${prompt} ${ahead_count}(Behind)"
+		fi
 
-    # Return the prompt string
-    echo -n "$prompt" ⇒
-}
-
+		# Return the prompt string
+		echo -n "$prompt" ⇒
+	}
 
 	git_repo_name() {
 		# Get the repository name by parsing the git remote URL
@@ -249,15 +252,12 @@ if ! [[ $(command -v git &>/dev/null) ]]; then
 	}
 	# Set Bash prompt
 	PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
-
 fi
 
 # IF lazygit is installed then make an alias for it
 if ! [[ $(command -v "lazygit" &>/dev/null) ]]; then
 	alias lg='lazygit'
 fi
-
-
 
 # linux homebrew
 # Only IF brew is installed
