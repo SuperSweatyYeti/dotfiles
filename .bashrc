@@ -37,6 +37,7 @@ else
 	: # Do nothing
 fi
 
+# another comment
 # Editing files as sudo
 # IF we are ubuntu  
 if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu"  &>/dev/null) ]]; then
