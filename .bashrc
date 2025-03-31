@@ -39,7 +39,7 @@ fi
 
 # Distro Specific settings
 # IF we are ubuntu
-if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; then
+if [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
@@ -47,7 +47,7 @@ if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu" &>/dev/null) ]]; the
 		
 	fi
 # IF we are Debian
-elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian" &>/dev/null) ]]; then
+elif [[ $(lsb_release -a | grep -i "Distributor ID: Debian" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
