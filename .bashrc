@@ -14,8 +14,6 @@ export PATH
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
-
-# comment
 # User specific aliases and functions
 if [ -d ~/.bashrc.d ]; then
 	for rc in ~/.bashrc.d/*; do
@@ -159,18 +157,69 @@ if ! [[ $(command -v git &>/dev/null) ]]; then
 	# Function to get Git branch and status
 	# Function to get Git branch and change color based on status
 	git_prompt() {
-		local branch color
-		branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
+    local branch color modified_files staged_files unstaged_files stash_count behind_count ahead_count prompt
 
-		# Check if there are uncommitted changes
-		if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
-			color=$(tput setaf 114) # Soft Green (Clean repo)
-		else
-			color=$(tput setaf 185) # Soft Yellow (Uncommitted changes)
-		fi
+    # Get the current branch
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
 
-		echo " ${color} ${branch}${RESET} ⇒"
-	}
+    # Count of staged files (modified or added but not committed yet)
+    staged_files=$(git status --short 2>/dev/null | grep -c "^[AM]")
+
+    # Count of unstaged files (modified but not added to the staging area)
+    unstaged_files=$(git status --short 2>/dev/null | grep -c "^ M")
+
+    # Count of modified files (staged or unstaged)
+    modified_files=$((staged_files + unstaged_files))
+
+    # Check for stashes
+    stash_count=$(git stash list 2>/dev/null | wc -l)
+
+    # Check if the local branch is behind or ahead of the remote
+    behind_count=$(git rev-list --left-only --count HEAD...origin/"$branch" 2>/dev/null)
+    ahead_count=$(git rev-list --right-only --count HEAD...origin/"$branch" 2>/dev/null)
+
+    # Set colors based on repo status
+    if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
+        color=$(tput setaf 114)  # Soft Green (Clean repo)
+    else
+        color=$(tput setaf 185)  # Soft Yellow (Uncommitted changes)
+    fi
+
+    # Initialize the prompt string
+    prompt=" ${color} ${branch}${RESET}"
+
+    # Add the number of modified files with the page icon (󰷉)
+    if [ "$modified_files" -gt 0 ]; then
+        prompt="${prompt} ${modified_files}󰷉"
+    fi
+
+    # Add the number of staged files with the check mark icon (✔️)
+    if [ "$staged_files" -gt 0 ]; then
+        prompt="${prompt} ${staged_files}✔️"
+    fi
+
+    # Add the number of unstaged files with the reload/refresh icon (󰜞)
+    if [ "$unstaged_files" -gt 0 ]; then
+        prompt="${prompt} ${unstaged_files}󰜞"
+    fi
+
+    # Add the number of stashes with the package icon (📦)
+    if [ "$stash_count" -gt 0 ]; then
+        prompt="${prompt} ${stash_count}📦"
+    fi
+
+    # Add behind and ahead status with icons
+    if [ "$behind_count" -gt 0 ]; then
+	    prompt="${prompt} ${behind_count}(Ahead)"
+    fi
+    if [ "$ahead_count" -gt 0 ]; then
+	    prompt="${prompt} ${ahead_count}(Behind)"
+    fi
+
+    # Return the prompt string
+    echo -n "$prompt" ⇒
+}
+
 
 	git_repo_name() {
 		# Get the repository name by parsing the git remote URL
