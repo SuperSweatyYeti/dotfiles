@@ -146,6 +146,28 @@ fi
 # 	[ -n "${branch}" ] && echo " (  ${branch} )"
 # }
 
+# Catppuccin Mocha
+# Define colors using termcap (tput alternative)
+COLOR1=$(
+	tput bold
+	tput setaf 75
+) # Blue (User)
+COLOR2=$(
+	tput bold
+	tput setaf 176
+) # Pink (Host)
+COLOR3=$(
+	tput bold
+	tput setaf 116
+) # Teal (Directory)
+COLOR4=$(
+	tput bold
+	tput setaf 215
+) # Bright Yellow-Orange (@ symbol)
+COLOR5=$(
+	tput bold
+) # Bright Yellow-Orange (@ symbol)
+RESET=$(tput sgr0)
 
 
 # Set the PS1 prompt
@@ -235,28 +257,6 @@ if ! [[ $(command -v "lazygit" &>/dev/null) ]]; then
 	alias lg='lazygit'
 fi
 
-# Catppuccin Mocha
-# Define colors using termcap (tput alternative)
-COLOR1=$(
-	tput bold
-	tput setaf 75
-) # Blue (User)
-COLOR2=$(
-	tput bold
-	tput setaf 176
-) # Pink (Host)
-COLOR3=$(
-	tput bold
-	tput setaf 116
-) # Teal (Directory)
-COLOR4=$(
-	tput bold
-	tput setaf 215
-) # Bright Yellow-Orange (@ symbol)
-COLOR5=$(
-	tput bold
-) # Bright Yellow-Orange (@ symbol)
-RESET=$(tput sgr0)
 
 
 # linux homebrew
