@@ -29,10 +29,23 @@ unset rc
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
 	alias vim='nvim'
 	EDITOR='nvim'
+	SUDO_EDITOR='nvim'
 elif ! [[ $(command -v vim &>/dev/null) ]]; then
 	EDITOR='vim'
+	SUDO_EDITOR='vim'
 else
 	: # Do nothing
+fi
+
+# Editing files as sudo
+# IF we are ubuntu  
+if ! [[ $(lsb_release -a | grep -i "Distributor ID: Ubuntu"  &>/dev/null) ]]; then
+	alias sudoedit='sudo -E -s $EDITOR'
+# IF we are Debian
+elif ! [[ $(lsb_release -a | grep -i "Distributor ID: Debian"  &>/dev/null) ]]; then
+	alias sudoedit='sudo -E -s $EDITOR'
+else
+	: # do nothing
 fi
 
 # If lsd is installed then use that for nicer listings
