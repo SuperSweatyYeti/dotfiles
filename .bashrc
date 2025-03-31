@@ -24,7 +24,7 @@ if [ -d ~/.bashrc.d ]; then
 fi
 unset rc
 
-# Set Default Editor
+# different
 # If neovim exists then set alias
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
 	alias vim='nvim'
