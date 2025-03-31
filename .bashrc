@@ -25,7 +25,7 @@ fi
 unset rc
 
 # Set Default Editor
-# If nvim exists then set alias
+# If neovim exists then set alias
 if ! [[ $(command -v nvim &>/dev/null) ]]; then
 	alias vim='nvim'
 	EDITOR='nvim'
@@ -43,60 +43,66 @@ else
 	alias ll="ls -al"
 fi
 
-alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
+if ! [[ $(command -v "kf5-config --version" &>/dev/null) ]]; then
+	alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
+fi
 #alias btop="bpytop"
 
 # fzf function IF fzf is installed
 if ! [[ $(command -v fzf &>/dev/null) ]]; then
-# fzf config
-# # ripgrep->fzf->nvim [QUERY]
-# fuzzy ripgrep search to enter with nvim ctrl + o
-rfz() (
-	RELOAD='reload:rg --column --color=always --smart-case {q} || :'
-	OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+	# fzf config
+	# # ripgrep->fzf->nvim [QUERY]
+	# fuzzy ripgrep search to enter with nvim ctrl + o
+	rfz() {
+		RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+		OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
             nvim {1} +{2}     # No selection. Open the current line in nvim.
           fi'
-	fzf --disabled --ansi \
-		--bind "start:$RELOAD" --bind "change:$RELOAD" \
-		--bind "ctrl-o:become:$OPENER" \
-		--bind 'ctrl-/:toggle-preview' \
-		--delimiter : \
-		--preview 'bat --style=full --color=always --highlight-line {2} {1}' \
-		--preview-window '~4,+{2}+4/3,<80(up)' \
-		--query "$*"
-)
-# fuzzy search to enter with nvim ctrl + o
+		fzf --disabled --ansi \
+			--bind "start:$RELOAD" --bind "change:$RELOAD" \
+			--bind "ctrl-o:become:$OPENER" \
+			--bind 'ctrl-/:toggle-preview' \
+			--delimiter : \
+			--preview 'bat --style=full --color=always --highlight-line {2} {1}' \
+			--preview-window '~4,+{2}+4/3,<80(up)' \
+			--query "$*"
+	}
+	# fuzzy search to enter with nvim ctrl + o
 
-fz() (
-	fzf --ansi \
-		--bind "ctrl-o:become:$EDITOR" \
-		--delimiter : \
-		--preview 'bat --style=full --color=always {}' \
-		--bind 'alt-j:preview-down' \
-		--bind 'alt-k:preview-up' \
-		--preview-window '~4,+{2}+4/3,<80(up)'
-)
+	fz() {
+		fzf --ansi \
+			--bind "ctrl-o:become:$EDITOR" \
+			--delimiter : \
+			--preview 'bat --style=full --color=always {}' \
+			--bind 'alt-j:preview-down' \
+			--bind 'alt-k:preview-up' \
+			--preview-window '~4,+{2}+4/3,<80(up)'
+	}
 
-alias cdfz='cd $(find . -type d -print | fzf ) '
+	alias cdfz='cd $(find . -type d -print | fzf ) '
 
-# Set up fzf key bindings and fuzzy completion
-# depeding on installation fzf --bash won't be neccessary
-if  [[ $(command -v "fzf --bash" &>/dev/null) ]]; then
-	eval "$(fzf --bash )"
-fi
+	# Set up fzf key bindings and fuzzy completion
+	# depeding on installation fzf --bash won't be neccessary
+	if [[ $(command -v "fzf --bash" &>/dev/null) ]]; then
+		eval "$(fzf --bash)"
+	fi
 
 fi
 
 # Yazi config
-# cd into directory when leaving yazi
-cdy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
+# ONLY if yazi is installed
+if ! [[ $(command -v yazi &>/dev/null) ]]; then
+	# cd into directory when leaving yazi
+	cdy() {
+		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+		yazi "$@" --cwd-file="$tmp"
+		if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+			builtin cd -- "$cwd"
+		fi
+		rm -f -- "$tmp"
+	}
+	alias y='cdy'
+fi
 
 # Old Custom prompts
 # PS1 Prompt
@@ -125,35 +131,37 @@ cdy() {
 #
 # 	[ -n "${branch}" ] && echo " (  ${branch} )"
 # }
-# Function to get Git branch and status
-# Function to get Git branch and change color based on status
-git_prompt() {
-    local branch color
-    branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
 
-    # Check if there are uncommitted changes
-    if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
-        color=$(tput setaf 114)  # Soft Green (Clean repo)
-    else
-        color=$(tput setaf 185)  # Soft Yellow (Uncommitted changes)
-    fi
+# Add some nice git status to the prompt ONLY if git is installed
+if ! [[ $(command -v git &>/dev/null) ]]; then
 
-    echo " ( ${color} ${branch}${RESET} )"
-}
+	# Function to get Git branch and status
+	# Function to get Git branch and change color based on status
+	git_prompt() {
+		local branch color
+		branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
 
+		# Check if there are uncommitted changes
+		if git diff --quiet --ignore-submodules HEAD 2>/dev/null; then
+			color=$(tput setaf 114) # Soft Green (Clean repo)
+		else
+			color=$(tput setaf 185) # Soft Yellow (Uncommitted changes)
+		fi
 
+		echo " ${color} ${branch}${RESET} ⇒"
+	}
 
-git_repo_name() {
-	REPO_NAME="$(git remote show -n origin 2>/dev/null | grep Fetch | cut -d: -f2-)"
-	REPO_BASENAME="$(basename "$REPO_NAME")"
-	[ -n "${REPO_BASENAME}" ] && echo "($REPO_BASENAME)"
-}
+	git_repo_name() {
+		# Get the repository name by parsing the git remote URL
+		git remote get-url origin 2>/dev/null | sed -E 's/.*[:\/]([^\/]+)\/([^\/]+).*/\2/'
+	}
+
+fi
 
 # IF lazygit is installed then make an alias for it
 if ! [[ $(command -v "lazygit" &>/dev/null) ]]; then
 	alias lg='lazygit'
 fi
-
 
 # Catppuccin Mocha
 # Define colors using termcap (tput alternative)
@@ -184,5 +192,5 @@ PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}
 # linux homebrew
 # Only IF brew is installed
 if ! [[ $(command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null) ]]; then
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
