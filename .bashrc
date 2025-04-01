@@ -53,7 +53,9 @@ if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if command -v fzf &>/dev/null; then
-		source /usr/share/fzf/shell/key-bindings.bash
+		if test -e /usr/share/fzf/shell/key-bindings.bash; then
+			source /usr/share/fzf/shell/key-bindings.bash
+		fi
 	fi
 
 # IF we are Debian
@@ -61,14 +63,18 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if command -v fzf &>/dev/null; then
-		source /usr/share/fzf/shell/key-bindings.bash
+		if test -e /usr/share/fzf/shell/key-bindings.bash; then
+			source /usr/share/fzf/shell/key-bindings.bash
+		fi
 	fi
 
 # IF we are Fedora
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 	# IF fzf is installed then
 	if command -v fzf &>/dev/null; then
-		source /usr/share/fzf/shell/key-bindings.bash
+		if test -e /usr/share/fzf/shell/key-bindings.bash; then
+			source /usr/share/fzf/shell/key-bindings.bash
+		fi
 	fi
 
 else
