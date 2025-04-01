@@ -83,12 +83,12 @@ else
 	alias ll="ls -al"
 fi
 
-if ! [[ $(command -v "kf5-config --version" &>/dev/null) ]]; then
+if command -v "kf5-config --version" &>/dev/null; then
 	alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
 fi
 
 # fzf function IF fzf is installed
-if ! [[ $(command -v fzf &>/dev/null) ]]; then
+if command -v fzf &>/dev/null; then
 	# fzf config
 	# # ripgrep->fzf->nvim [QUERY]
 	# fuzzy ripgrep search to enter with nvim ctrl + o
