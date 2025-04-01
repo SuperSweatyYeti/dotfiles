@@ -39,7 +39,7 @@ fi
 
 # Distro Specific settings
 # IF we are ubuntu
-if [[ $(lsb_release -i | grep -q "Ubuntu" &>/dev/null) ]]; then
+if [[ $(lsb_release -a | grep -iE "Distributor\sID:\sUbuntu" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
@@ -47,13 +47,14 @@ if [[ $(lsb_release -i | grep -q "Ubuntu" &>/dev/null) ]]; then
 		
 	fi
 # IF we are Debian
-elif [[ $(lsb_release -i | grep -q "Debian" &>/dev/null) ]]; then
+elif [[ $(lsb_release -a | grep -iE "Distributor\sID:\sDebian" &>/dev/null) ]]; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
 		source /usr/share/fzf/shell/key-bindings.bash
 	fi
-elif [[ $(lsb_release -i | grep -q "Fedora" &>/dev/null) ]]; then
+# IF we are Fedora
+elif [[ $(lsb_release -a | grep -iE "Distributor\sID:\sFedora" &>/dev/null) ]]; then
 	# IF fzf is installed then
 	if ! [[ $(command -v fzf &>/dev/null) ]]; then
 		source /usr/share/fzf/shell/key-bindings.bash
