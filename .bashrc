@@ -279,7 +279,7 @@ if command -v git &>/dev/null; then
 	PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
 fi
 
-# IF lazygit is installed then make an alias for it
+# IF lazygit is installed without using brew
 if command -v lazygit &>/dev/null; then
 	alias lg='lazygit'
 fi
@@ -288,4 +288,10 @@ fi
 # Only IF brew is installed
 if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+	# Aliases for brew installed applications
+	# IF lazygit is installed with brew then make an alias for it
+	if command -v lazygit &>/dev/null; then
+		alias lg='lazygit'
+	fi
 fi
