@@ -26,45 +26,57 @@ unset rc
 
 # Set default editor
 # If neovim exists then set alias
-if ! [[ $(command -v nvim &>/dev/null) ]]; then
+# if ! [[ $(command -v nvim &>/dev/null) ]]; then
+# 	alias vim='nvim'
+# 	EDITOR='nvim'
+# 	SUDO_EDITOR='nvim'
+# elif ! [[ $(command -v vim &>/dev/null) ]]; then
+# 	EDITOR='vim'
+# 	SUDO_EDITOR='vim'
+# else
+# 	: # Do nothing
+# fi
+
+# Set default editor
+if command -v nvim &>/dev/null; then
 	alias vim='nvim'
 	EDITOR='nvim'
 	SUDO_EDITOR='nvim'
-elif ! [[ $(command -v vim &>/dev/null) ]]; then
+elif command -v vim &>/dev/null; then
 	EDITOR='vim'
 	SUDO_EDITOR='vim'
-else
-	: # Do nothing
 fi
 
-# Distro Specific settings
-# IF we are ubuntu
-if [[ $(lsb_release -a | grep -iE "Distributor\sID:\sUbuntu" &>/dev/null) ]]; then
+# # Distro Specific settings
+# IF we are Ubuntu
+if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
-	if ! [[ $(command -v fzf &>/dev/null) ]]; then
+	if command -v fzf &>/dev/null; then
 		source /usr/share/fzf/shell/key-bindings.bash
-		
 	fi
+
 # IF we are Debian
-elif [[ $(lsb_release -a | grep -iE "Distributor\sID:\sDebian" &>/dev/null) ]]; then
+elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
 	alias sudoedit='sudo -E -s $EDITOR'
 	# IF fzf is installed then
-	if ! [[ $(command -v fzf &>/dev/null) ]]; then
+	if command -v fzf &>/dev/null; then
 		source /usr/share/fzf/shell/key-bindings.bash
 	fi
+
 # IF we are Fedora
-elif [[ $(lsb_release -a | grep -iE "Distributor\sID:\sFedora" &>/dev/null) ]]; then
+elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 	# IF fzf is installed then
-	if ! [[ $(command -v fzf &>/dev/null) ]]; then
+	if command -v fzf &>/dev/null; then
 		source /usr/share/fzf/shell/key-bindings.bash
 	fi
+
 else
 	: # do nothing
 fi
 
 # If lsd is installed then use that for nicer listings
-if ! [[ $(command -v lsd &>/dev/null) ]]; then
+if command -v lsd &>/dev/null; then
 	alias ls="lsd"
 	alias ll="lsd -al"
 else
@@ -109,7 +121,7 @@ if ! [[ $(command -v fzf &>/dev/null) ]]; then
 
 	# Set up fzf key bindings and fuzzy completion
 	# depending on installation "fzf --bash" won't be neccessary
-	if [[ $(command -v "fzf --bash" &>/dev/null) ]]; then
+	if command -v "fzf --bash" &>/dev/null; then
 		eval "$(fzf --bash)"
 	fi
 
@@ -117,7 +129,7 @@ fi
 
 # Yazi config
 # ONLY if yazi is installed
-if ! [[ $(command -v yazi &>/dev/null) ]]; then
+if command -v yazi &>/dev/null; then
 	# cd into directory when leaving yazi
 	cdy() {
 		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -185,7 +197,7 @@ RESET=$(tput sgr0)
 PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
 
 # Add some nice git status to the prompt ONLY if git is installed
-if ! [[ $(command -v git &>/dev/null) ]]; then
+if command -v git &>/dev/null; then
 
 	# Function to get Git branch and status
 	# Function to get Git branch and change color based on status
@@ -262,12 +274,12 @@ if ! [[ $(command -v git &>/dev/null) ]]; then
 fi
 
 # IF lazygit is installed then make an alias for it
-if ! [[ $(command -v "lazygit" &>/dev/null) ]]; then
+if command -v lazygit &>/dev/null; then
 	alias lg='lazygit'
 fi
 
 # linux homebrew
 # Only IF brew is installed
-if ! [[ $(command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null) ]]; then
+if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
