@@ -8,9 +8,12 @@ local config = wezterm.config_builder()
 --
 -- Colorscheme
 -- config.color_scheme = 'Catppuccin Mocha (Gogh)'
-config.color_scheme = 'Catppuccin Macchiato'
-config.color_scheme = 'Catppuccin Macchiato (Gogh)'
+-- config.color_scheme = 'Catppuccin Macchiato'
+-- config.color_scheme = 'Catppuccin Macchiato (Gogh)'
 -- config.color_scheme = 'Chalkboard (Gogh)'
+-- config.color_scheme = 'Tokyo Night'
+-- config.color_scheme = 'Tokyo Night Moon'
+config.color_scheme = 'Tomorrow (dark) (terminal.sexy)'
 config.window_background_opacity = 1.0 -- Max 1.0 Min 0.0
 -- Only for Macos ?
 -- config.macos_window_background_blur = 20 -- Max 20 Min 0
