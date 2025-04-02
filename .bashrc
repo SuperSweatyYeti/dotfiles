@@ -137,7 +137,7 @@ fi
 # ONLY if yazi is installed
 if command -v yazi &>/dev/null; then
 	# cd into directory when leaving yazi
-	cdy() {
+	yaz() {
 		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 		yazi "$@" --cwd-file="$tmp"
 		if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
@@ -145,7 +145,8 @@ if command -v yazi &>/dev/null; then
 		fi
 		rm -f -- "$tmp"
 	}
-	alias y='cdy'
+	alias y='yaz'
+	alias yazi='y'
 fi
 
 # Old Custom prompts
