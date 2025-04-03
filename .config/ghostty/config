@@ -45,18 +45,20 @@
 
 # Custom config START HERE 
 ## Theme customization
-theme = "catppuccin-mocha"
-#background-opacity = 0.8
-#background-blur = true
+# theme = "catppuccin-mocha"
+# theme = "tokyonight"
+theme = "gruvbox-material"
+background-opacity = 0.8
+background-blur = true
 
 ## Font
 font-family = "DejaVuSansM Nerd Font Mono"
-font-size = 14
+font-size = 15
 
 
 ## Cursor
 ### Stop shell integration from overriding cursor
 shell-integration-features = no-cursor
 cursor-opacity = 0.9
-cursor-style = block_hollow
+cursor-style = block
 cursor-style-blink = true
