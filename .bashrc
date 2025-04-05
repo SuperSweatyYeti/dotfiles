@@ -101,8 +101,8 @@ if command -v fzf &>/dev/null; then
 	rfz() {
 		RELOAD='reload:rg --column --color=always --smart-case {q} || :'
 		OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
-            nvim {1} +{2}     # No selection. Open the current line in nvim.
-          fi'
+				nvim {1} +{2}     # No selection. Open the current line in nvim.
+			fi'
 		fzf --disabled --ansi \
 			--bind "start:$RELOAD" --bind "change:$RELOAD" \
 			--bind "ctrl-o:become:$OPENER" \
