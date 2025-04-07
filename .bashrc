@@ -133,21 +133,6 @@ if command -v fzf &>/dev/null; then
 
 fi
 
-# Yazi config
-# ONLY if yazi is installed
-if command -v yazi &>/dev/null; then
-	# cd into directory when leaving yazi
-	yaz() {
-		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-		yazi "$@" --cwd-file="$tmp"
-		if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-			builtin cd -- "$cwd"
-		fi
-		rm -f -- "$tmp"
-	}
-	alias y='yaz'
-	alias yazi='y'
-fi
 
 # Old Custom prompts
 # PS1 Prompt
@@ -285,6 +270,23 @@ if command -v lazygit &>/dev/null; then
 	alias lg='lazygit'
 fi
 
+# Yazi config
+# ONLY if yazi is installed without using brew
+if command -v yazi &>/dev/null; then
+	# cd into directory when leaving yazi
+	cdyaz() {
+		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+		yazi "$@" --cwd-file="$tmp"
+		if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+			builtin cd -- "$cwd"
+		fi
+		rm -f -- "$tmp"
+	}
+	alias y='cdyaz'
+	alias yazi='y'
+fi
+
+
 # linux homebrew
 # Only IF brew is installed
 if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
@@ -294,5 +296,20 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	# IF lazygit is installed with brew then make an alias for it
 	if command -v lazygit &>/dev/null; then
 		alias lg='lazygit'
+	fi
+	# Yazi config
+	# ONLY if yazi is installed using brew
+	if command -v yazi &>/dev/null; then
+		# cd into directory when leaving yazi
+		yaz() {
+			local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+			yazi "$@" --cwd-file="$tmp"
+			if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+				builtin cd -- "$cwd"
+			fi
+			rm -f -- "$tmp"
+		}
+		alias y='yaz'
+		alias yazi='y'
 	fi
 fi
