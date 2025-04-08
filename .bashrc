@@ -274,14 +274,38 @@ fi
 # ONLY if yazi is installed without using brew
 if command -v yazi &>/dev/null; then
 	# cd into directory when leaving yazi
-	cdyaz() {
-		local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-		yazi "$@" --cwd-file="$tmp"
-		if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-			builtin cd -- "$cwd"
+	# cdyaz() {
+	# 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	# 	yazi "$@" --cwd-file="$tmp"
+	# 	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+	# 		builtin cd -- "$cwd"
+	# 	fi
+	# 	rm -f -- "$tmp"
+	# }
+	# cd into directory when leaving yazi
+	function cdyaz() {
+	    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	    
+	    # Filter out --cwd-file from the arguments passed to yazi, if present
+	    local args=()
+	    for arg in "$@"; do
+		if [[ "$arg" != --cwd-file* ]]; then
+		    args+=("$arg")
 		fi
-		rm -f -- "$tmp"
+	    done
+	    
+	    # Now call yazi with the modified args and add --cwd-file="$tmp" once
+	    yazi "${args[@]}" --cwd-file="$tmp"
+	    
+	    # Handle cwd change
+	    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	    fi
+	    
+	    # Clean up the temporary file
+	    rm -f -- "$tmp"
 	}
+	
 	alias y='cdyaz'
 	alias yazi='y'
 fi
@@ -301,7 +325,7 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	# ONLY if yazi is installed using brew
 	if command -v yazi &>/dev/null; then
 		# cd into directory when leaving yazi
-		yaz() {
+		function yaz() {
 			local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 			yazi "$@" --cwd-file="$tmp"
 			if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
