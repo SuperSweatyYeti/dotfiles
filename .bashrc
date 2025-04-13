@@ -55,6 +55,8 @@ if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
 	if command -v fzf &>/dev/null; then
 		if test -e /usr/share/fzf/shell/key-bindings.bash; then
 			source /usr/share/fzf/shell/key-bindings.bash
+		elif test -e /usr/share/doc/fzf/examples/key-bindings.bash; then
+			source /usr/share/doc/fzf/examples/key-bindings.bash
 		fi
 	fi
 
