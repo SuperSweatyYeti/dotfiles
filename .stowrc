@@ -1,3 +1,4 @@
 --ignore=.stowrc
 --ignore=.gitmodules
 --ignore=setup.sh
+--ignore=keyd.conf
