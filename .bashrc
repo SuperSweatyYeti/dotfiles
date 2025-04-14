@@ -37,6 +37,15 @@ unset rc
 # 	: # Do nothing
 # fi
 
+# Cheat function to curl for examples of a command using https://cheat.sh
+if command -v curl &>/dev/null; then
+	function cheatsh(){
+		# First argument will be the command we
+		# want to see examples for
+		curl https://cheat.sh/${1}
+	}
+fi
+
 # Set default editor
 if command -v nvim &>/dev/null; then
 	alias vim='nvim'
