@@ -294,7 +294,7 @@ if command -v yazi &>/dev/null; then
 	# 	rm -f -- "$tmp"
 	# }
 	# cd into directory when leaving yazi
-	function cdyaz() {
+	function cdyazi() {
 	    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	    
 	    # Filter out --cwd-file from the arguments passed to yazi, if present
@@ -317,8 +317,8 @@ if command -v yazi &>/dev/null; then
 	    rm -f -- "$tmp"
 	}
 	
-	alias y='cdyaz'
-	alias yazi='y'
+	alias y='yazi'
+	alias cdy='cdyazi'
 fi
 
 
@@ -336,7 +336,7 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	# ONLY if yazi is installed using brew
 	if command -v yazi &>/dev/null; then
 		# cd into directory when leaving yazi
-		function yaz() {
+		function cdyazi() {
 			local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 			yazi "$@" --cwd-file="$tmp"
 			if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
@@ -344,7 +344,7 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 			fi
 			rm -f -- "$tmp"
 		}
-		alias y='yaz'
-		alias yazi='y'
+		alias y='yazi'
+		alias cdy='cdyazi'
 	fi
 fi
