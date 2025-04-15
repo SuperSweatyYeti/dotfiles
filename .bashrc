@@ -37,6 +37,34 @@ unset rc
 # 	: # Do nothing
 # fi
 
+# My wonderful hgrep function which uses awk to grep with headers!
+if test -e ~/.config/bashrc-plus/hgrep.bash; then
+	source  ~/.config/bashrc-plus/hgrep.bash
+fi
+
+# Helper function related to hgrep
+# Some commands don't output their headers if they are being piped
+# Example: flatpak list
+outty() {
+  if [[ $# -eq 0 ]]; then
+    echo "Usage: outty COMMAND [ARGS]"
+    echo "Runs COMMAND in a pseudo-terminal to preserve headers"
+    return 1
+  fi
+  
+  # Use either script, unbuffer, or stdbuf
+  if command -v script &>/dev/null; then
+    script -qc "$*" /dev/null
+  elif command -v unbuffer &>/dev/null; then
+    unbuffer $@
+  elif command -v stdbuf &>/dev/null; then
+    stdbuf -i0 -o0 -e0 $@
+  else
+    echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
+    return 1
+  fi
+}
+
 # Cheat function to curl for examples of a command using https://cheat.sh
 if command -v curl &>/dev/null; then
 	function cheatsh(){
