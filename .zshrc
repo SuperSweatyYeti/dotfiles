@@ -371,6 +371,8 @@ if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.
 	# Surround with s key prefix
 	# add surrounding quotes with sa"
 	ZVM_VI_SURROUND_BINDKEY=s-prefix
+	# Cursor in insert mode
+	ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 
 	export PROMPT=$'└─╼ [${COLOR4}$ZVM_MODE${RESET}] %# '
 fi
