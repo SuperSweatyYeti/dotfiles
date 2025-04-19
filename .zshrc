@@ -303,20 +303,6 @@ fi
 
 
 # ZSH specific settings
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-setopt appendhistory
-
-# Tab completion highlighting
-zstyle ':completion:*' menu select
-# Navigate completion list with vim keys
-zmodload zsh/complist
-# use the vi navigation keys in menu completion
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
 
 
 # Syntax highlighting (if available)
@@ -364,15 +350,29 @@ colors
 # zle -N zle-line-init
 # zle -N zle-keymap-select
 
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-# zsh-vi-mode plugin config
-## Escape key
-ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
-ZVM_VI_ESCAPE_BINDKEY=ii
-ZVM_VI_VISUAL_ESCAPE_BINDKEY=ii
-# Surround with s key prefix
-# add surrounding quotes with sa"
-ZVM_VI_SURROUND_BINDKEY=s-prefix
+
+
+# IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
+# %{\n%}
+# Update the prompt - replace %# with $PROMPT_SYMBOL
+NEWLINE=$'\n'
+precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
+export PROMPT=$'└─╼ %# '
+
+
+if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 ; then
+	# zsh-vi-mode plugin config
+	## Escape key
+	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
+	ZVM_VI_ESCAPE_BINDKEY=ii
+	ZVM_VI_VISUAL_ESCAPE_BINDKEY=ii
+	# Surround with s key prefix
+	# add surrounding quotes with sa"
+	ZVM_VI_SURROUND_BINDKEY=s-prefix
+
+	export PROMPT=$'└─╼ [${COLOR4}$ZVM_MODE${RESET}] %# '
+fi
+
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
 # Ctrl+i in vi mode to enter vim buffer
@@ -380,9 +380,18 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd '^i' edit-command-line
 
-# Cursor style
 
-# IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
-# %{\n%}
-# Update the prompt - replace %# with $PROMPT_SYMBOL
-PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL%{\[%}${COLOR4}$ZVM_MODE${RESET}] %# '
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+
+# Tab completion highlighting
+zstyle ':completion:*' menu select
+# Navigate completion list with vim keys
+zmodload zsh/complist
+# use the vi navigation keys in menu completion
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
