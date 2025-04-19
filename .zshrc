@@ -374,7 +374,7 @@ if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.
 
 	export PROMPT=$'└─╼ [${COLOR4}$ZVM_MODE${RESET}] %# '
 fi
-
+bindkey '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
 # Ctrl+i in vi mode to enter vim buffer
