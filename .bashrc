@@ -376,3 +376,10 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 		alias cdy='cdyazi'
 	fi
 fi
+
+# Carapace bash completion additions
+if command -v "carapace" &>/dev/null; then
+	export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense,nu' # optional
+	source <(carapace _carapace)
+fi
+
