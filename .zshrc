@@ -170,7 +170,7 @@ COLOR4=$(
 ) # Bright Yellow-Orange (@ symbol)
 COLOR5=$(
 	tput bold
-) # Bright Yellow-Orange (@ symbol)
+) # Reset the color
 RESET=$(tput sgr0)
 
 # Add some nice git status to the prompt ONLY if git is installed
@@ -303,9 +303,20 @@ fi
 
 
 # ZSH specific settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
 
 # Tab completion highlighting
 zstyle ':completion:*' menu select
+# Navigate completion list with vim keys
+zmodload zsh/complist
+# use the vi navigation keys in menu completion
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
 
 
 # Syntax highlighting (if available)
@@ -331,29 +342,47 @@ setopt PROMPT_SUBST         # Allow parameter expansion, command substitution in
 autoload -Uz colors
 colors
 
-# Enable vi mode
-bindkey -v
 
-# While in vi mode press Ctrl+i to enter a vim buffer 
-# to compose a command
+
+# # Enable vi mode with ii
+# bindkey -M viins 'ii' vi-cmd-mode
+# # While in vi mode press Ctrl+i to enter a vim buffer 
+# # to compose a command
+# autoload -z edit-command-line
+# zle -N edit-command-line
+# bindkey -M vicmd '^i' edit-command-line
+#
+# function zle-line-init zle-keymap-select {
+#     case ${KEYMAP} in
+#         (vicmd)      PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL< ' ;;
+#         (main|viins) PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
+#         (*)          PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
+#     esac
+#     zle reset-prompt
+# }
+#
+# zle -N zle-line-init
+# zle -N zle-keymap-select
+
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+# zsh-vi-mode plugin config
+## Escape key
+ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
+ZVM_VI_ESCAPE_BINDKEY=ii
+ZVM_VI_VISUAL_ESCAPE_BINDKEY=ii
+# Surround with s key prefix
+# add surrounding quotes with sa"
+ZVM_VI_SURROUND_BINDKEY=s-prefix
+bindkey -M vicmd 'L' end-of-line
+bindkey -M vicmd 'H' beginning-of-line
+# Ctrl+i in vi mode to enter vim buffer
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd '^i' edit-command-line
 
-function zle-line-init zle-keymap-select {
-    case ${KEYMAP} in
-        (vicmd)      PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL< ' ;;
-        (main|viins) PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
-        (*)          PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
-    esac
-    zle reset-prompt
-}
-
-zle -N zle-line-init
-zle -N zle-keymap-select
-
+# Cursor style
 
 # IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
 # %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
-PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL%# '
+PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL%{\[%}${COLOR4}$ZVM_MODE${RESET}] %# '
