@@ -355,6 +355,8 @@ colors
 # IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
 # %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
+
+# precmd() for multiline to fix zsh prompt redraw issues
 NEWLINE=$'\n'
 precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
 export PROMPT=$'└─╼ %# '
