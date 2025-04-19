@@ -334,22 +334,26 @@ colors
 # Enable vi mode
 bindkey -v
 
-# Set up prompt with different character for vi mode
-export RPROMPT_INSERT=">"
-export RPROMPT_NORMAL="<"
-export PROMPT_SYMBOL=$RPROMPT_INSERT
+# While in vi mode press Ctrl+i to enter a vim buffer 
+# to compose a command
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd '^i' edit-command-line
 
-function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]]; then
-    # Command mode
-    PROMPT_SYMBOL=$RPROMPT_NORMAL
-  else
-    # Insert mode
-    PROMPT_SYMBOL=$RPROMPT_INSERT
-  fi
-  #zle reset-prompt
+function zle-line-init zle-keymap-select {
+    case ${KEYMAP} in
+        (vicmd)      PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL< ' ;;
+        (main|viins) PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
+        (*)          PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
+    esac
+    zle reset-prompt
 }
+
+zle -N zle-line-init
 zle -N zle-keymap-select
 
+
+# IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
+# %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
-PROMPT=$'\n┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL '
+PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL%# '
