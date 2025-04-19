@@ -262,7 +262,7 @@ if command -v git &>/dev/null; then
 		fi
 
 		# Initialize the prompt string
-		prompt=" ${color} ${branch}${RESET}"
+		prompt="${color} ${branch}${RESET}"
 
 		# Add the number of modified files with the page icon (󰷉)
 		if [ "$modified_files" -gt 0 ]; then
