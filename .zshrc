@@ -366,7 +366,7 @@ precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${CO
 export PROMPT=$'└─╼ %# '
 
 
-if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 ; then
+if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 || lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sNixOS" ; then
 	# zsh-vi-mode plugin config
 	## Escape key
 	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
