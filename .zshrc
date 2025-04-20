@@ -367,7 +367,7 @@ precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${CO
 export PROMPT=$'└─╼ %# '
 
 
-if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 || lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS" ; then
+if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 ||  lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS" ; then
 	# zsh-vi-mode plugin config
 	## Escape key
 	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
@@ -378,11 +378,57 @@ if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-
 	ZVM_VI_SURROUND_BINDKEY=s-prefix
 	# Cursor in insert mode
 	ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
+
 	# Source .fzf.zsh so that the ctrl+r bindkey is given back fzf
-        zvm_after_init_commands+=('
-	  source "$(fzf-share)/key-bindings.zsh"
-	  source "$(fzf-share)/completion.zsh"
-	')
+	# IF we are Ubuntu
+	if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
+		alias sudoedit='sudo -E -s $EDITOR'
+		# IF fzf is installed then
+		if command -v fzf &>/dev/null; then
+			if test -e /usr/share/fzf/shell/key-bindings.zsh; then
+				zvm_after_init_commands+=('
+				  source /usr/share/fzf/shell/key-bindings.zsh
+				')
+			elif test -e /usr/share/doc/fzf/examples/key-bindings.zsh; then
+				zvm_after_init_commands+=('
+				  source /usr/share/doc/fzf/examples/key-bindings.zsh
+				')
+			fi
+		fi
+
+	# IF we are Debian
+	elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
+		alias sudoedit='sudo -E -s $EDITOR'
+		# IF fzf is installed then
+		if command -v fzf &>/dev/null; then
+			if test -e /usr/share/fzf/shell/key-bindings.zsh; then
+				zvm_after_init_commands+=('
+				  source /usr/share/fzf/shell/key-bindings.zsh
+				')
+			fi
+		fi
+
+	# IF we are Fedora
+	elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
+		# IF fzf is installed then
+		if command -v fzf &>/dev/null; then
+			if test -e /usr/share/fzf/shell/key-bindings.zsh; then
+				zvm_after_init_commands+=('
+					source /usr/share/fzf/shell/key-bindings.zsh
+				')
+			fi
+		fi
+	# IF we are NixOS
+	elif lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS"; then
+		if [ -n "${commands[fzf-share]}" ]; then
+		zvm_after_init_commands+=('
+		  source "$(fzf-share)/key-bindings.zsh"
+		  source "$(fzf-share)/completion.zsh"
+		')
+		fi
+	else
+		: # do nothing
+	fi
 
 	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
