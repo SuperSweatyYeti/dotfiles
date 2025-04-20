@@ -378,7 +378,7 @@ if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.
 	# Cursor in insert mode
 	ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 
-	export PROMPT=$'└─╼ [${COLOR4}$ZVM_MODE${RESET}] %# '
+	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
 bindkey '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
