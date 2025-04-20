@@ -115,7 +115,7 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 			source /usr/share/fzf/shell/key-bindings.bash
 		fi
 	fi
-
+# IF we are NixOs
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sNixOS"; then
 	if command -v fzf-share >/dev/null; then
 		source "$(fzf-share)/key-bindings.bash"
