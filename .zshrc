@@ -96,8 +96,8 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 	fi
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sNixOS"; then
 	if command -v fzf-share >/dev/null; then
-		source "$(fzf-share)/key-bindings.bash"
-		source "$(fzf-share)/completion.bash"
+		source "$(fzf-share)/key-bindings.zsh"
+		source "$(fzf-share)/completion.zsh"
 	fi
 else
 	: # do nothing
