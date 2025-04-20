@@ -1,5 +1,4 @@
 # .zshrc
-
 # User specific environment
 if [[ ! "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 	PATH="$HOME/.local/bin:$HOME/bin:$PATH"
@@ -94,10 +93,12 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 			source /usr/share/fzf/shell/key-bindings.zsh
 		fi
 	fi
-elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sNixOS"; then
-	if command -v fzf-share >/dev/null; then
-		source "$(fzf-share)/key-bindings.zsh"
-		source "$(fzf-share)/completion.zsh"
+# IF we are NixOS
+elif lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS"; then
+	if [ -n "${commands[fzf-share]}" ]; then
+	source ~/dotfiles/fzf.zsh
+	  source "$(fzf-share)/key-bindings.zsh"
+	  source "$(fzf-share)/completion.zsh"
 	fi
 else
 	: # do nothing
@@ -366,7 +367,7 @@ precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${CO
 export PROMPT=$'└─╼ %# '
 
 
-if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 || lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sNixOS" ; then
+if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 || lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS" ; then
 	# zsh-vi-mode plugin config
 	## Escape key
 	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
@@ -377,6 +378,11 @@ if source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.
 	ZVM_VI_SURROUND_BINDKEY=s-prefix
 	# Cursor in insert mode
 	ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
+	# Source .fzf.zsh so that the ctrl+r bindkey is given back fzf
+        zvm_after_init_commands+=('
+	  source "$(fzf-share)/key-bindings.zsh"
+	  source "$(fzf-share)/completion.zsh"
+	')
 
 	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
@@ -403,3 +409,4 @@ bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
+
