@@ -96,7 +96,6 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
 # IF we are NixOS
 elif lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS"; then
 	if [ -n "${commands[fzf-share]}" ]; then
-	source ~/dotfiles/fzf.zsh
 	  source "$(fzf-share)/key-bindings.zsh"
 	  source "$(fzf-share)/completion.zsh"
 	fi
