@@ -367,7 +367,7 @@ precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${CO
 export PROMPT=$'└─╼ %# '
 
 
-if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1 ||  lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS" ; then
+if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
 	# zsh-vi-mode plugin config
 	## Escape key
 	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
@@ -429,16 +429,23 @@ if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-
 	else
 		: # do nothing
 	fi
-
+	# This will auto execute this zvm_after_lazy_keybindings function
+	# To avoid conflicts
+	function zvm_after_lazy_keybindings() {
+		# Don't enter edit-command-line with v in visual mode
+		zvm_bindkey visual 'v' zvm_enter_visual_mode
+		# Enter edit-command-line with Ctrl+e in normal mode
+		zvm_bindkey vicmd '^e' zvm_vi_edit_command_line
+		# Enter edit-command-line with Ctrl+e in visual mode
+		zvm_bindkey visual '^e' zvm_vi_edit_command_line
+	}
 	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
+
+
 bindkey '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
-# Ctrl+i in vi mode to enter vim buffer
-autoload -z edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd '^i' edit-command-line
 
 
 HISTFILE=~/.zsh_history
