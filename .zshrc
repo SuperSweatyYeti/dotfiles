@@ -366,7 +366,7 @@ precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${CO
 export PROMPT=$'└─╼ %# '
 
 
-if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
+if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
 	# zsh-vi-mode plugin config
 	## Escape key
 	ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
@@ -438,6 +438,34 @@ if source $(brew --prefix 2>/dev/null)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-
 		# Enter edit-command-line with Ctrl+e in visual mode
 		zvm_bindkey visual '^e' zvm_vi_edit_command_line
 	}
+
+	# This block of code fixes the bug in zsh-vi-mode plugin where the $ZVM_MODE does not update
+	# when using the 'c' vim motions like 'cw' 'ciw' 'cW' 'caw' etc.
+	#### START
+	function zvm_after_select_vi_mode() {
+	  # Force redraw prompt when the vi mode changes
+	  zle reset-prompt
+	}
+
+	# Add this handler to ensure change operations enter insert mode correctly
+	function zvm_change_handler() {
+	  # Make sure we're in insert mode after completing a change operation
+	  zvm_select_vi_mode $ZVM_MODE_INSERT
+	}
+
+	# Register the change handler function with the plugin's hooks
+	function zvm_after_init() {
+	  # Hook into the various change operations
+	  local original_widget
+	  for cmd in vi-change{,-eol,-whole-line} vi-substitute{,-whole-line}; do
+	    if (( $+widgets[$cmd] )); then
+	      original_widget="${widgets[$cmd]#user:}"
+	      zle -N $cmd zvm_change_handler
+	    fi
+	  done
+	}
+	#### END
+
 	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
 
@@ -445,6 +473,10 @@ fi
 bindkey '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
+# Don't need to use execute mode
+do-nothing-zsh() {}
+zle -N do-nothing-zsh
+bindkey -M vicmd ':' do-nothing-zsh
 
 
 HISTFILE=~/.zsh_history
