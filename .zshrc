@@ -473,8 +473,7 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
 fi
 
-
-bindkey '^l' autosuggest-accept
+bindkey -M viins '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
 # Don't need to use execute mode
