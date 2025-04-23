@@ -476,7 +476,7 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	}
 	#### END
 
-	export PROMPT=$'└─╼ [%{${COLOR4}%}$ZVM_MODE%{${RESET}%}] %# '
+	export PROMPT=$'└─╼ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
 fi
 
 bindkey -M viins '^l' autosuggest-accept
