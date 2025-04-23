@@ -20,6 +20,12 @@ autoload -Uz compinit
 compinit
 
 
+# My amazing function to grep with HEADERS!!
+if test -e ~/.config/bashrc-plus/hgrep.zsh ; then
+	source ~/.config/bashrc-plus/hgrep.zsh
+fi
+
+
 # Helper function related to hgrep
 # Some commands don't output their headers if they are being piped
 # Example: flatpak list
