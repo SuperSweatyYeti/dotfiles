@@ -265,13 +265,13 @@ if command -v git &>/dev/null; then
 	
 	# Set ZSH prompt (using PROMPT instead of PS1)
 	NEWLINE=$'\n'
-	precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
-	export PROMPT=$'└─╼ %# '
+	precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
+	export PROMPT=$'╰─ ❯ '
 else
 	# Basic prompt without git info
 	NEWLINE=$'\n'
-	precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ' }
-	export PROMPT=$'└─╼ %# '
+	precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ' }
+	export PROMPT=$'╰─ ❯ '
 fi
 
 # IF lazygit is installed
