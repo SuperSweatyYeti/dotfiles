@@ -500,9 +500,9 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	# Change to RED if command was not successful
 	error_status_prompt_color() {
 		if [[ $? -eq 0 || $? -eq 130 ]]; then
-			export PROMPT=$'╰─> [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
+			export PROMPT=$'╰─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
 		else 
-			export PROMPT=$'╰─> [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
+			export PROMPT=$'╰─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
 		fi
 	}
 	# Hook function into precmd so it runs before each prompt
