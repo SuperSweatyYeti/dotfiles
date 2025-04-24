@@ -268,7 +268,7 @@ if command -v lazygit &>/dev/null; then
 fi
 
 # Yazi config
-# ONLY if yazi is installed
+# ONLY if yazi is installed standalone
 if command -v yazi &>/dev/null; then
 	# cd into directory when leaving yazi
 	function cdyazi() {
@@ -305,6 +305,36 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
 	# IF lazygit is installed
 	if command -v lazygit &>/dev/null; then
 		alias lg='lazygit'
+	fi
+	# Yazi config
+	# ONLY if yazi is installed through brew
+	if command -v yazi &>/dev/null; then
+		# cd into directory when leaving yazi
+		function cdyazi() {
+			local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+			
+			# Filter out --cwd-file from the arguments passed to yazi, if present
+			local args=()
+			for arg in "$@"; do
+				if [[ "$arg" != --cwd-file* ]]; then
+					args+=("$arg")
+				fi
+			done
+			
+			# Now call yazi with the modified args and add --cwd-file="$tmp" once
+			yazi "${args[@]}" --cwd-file="$tmp"
+			
+			# Handle cwd change
+			if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+				builtin cd -- "$cwd"
+			fi
+			
+			# Clean up the temporary file
+			rm -f -- "$tmp"
+		}
+		
+		alias y='yazi'
+		alias cdy='cdyazi'
 	fi
 fi
 
