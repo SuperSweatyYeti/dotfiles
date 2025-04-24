@@ -2,3 +2,4 @@
 --ignore=.gitmodules
 --ignore=setup.sh
 --ignore=keyd.conf
+--ignore=fonts.sh
