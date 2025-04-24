@@ -180,7 +180,15 @@ COLOR4=$(
 ) # Bright Yellow-Orange (@ symbol)
 COLOR5=$(
 	tput bold
-) # Reset the color
+) 
+COLOR6=$( # Green 
+	tput bold
+	tput setaf 151
+)
+COLOR7=$( # Red 
+	tput bold
+	tput setaf 168
+) # Bright Yellow-Orange (@ symbol)
 RESET=$(tput sgr0)
 
 # Add some nice git status to the prompt ONLY if git is installed
@@ -256,10 +264,14 @@ if command -v git &>/dev/null; then
 	}
 	
 	# Set ZSH prompt (using PROMPT instead of PS1)
-	PROMPT=$'\n┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ %# '
+	NEWLINE=$'\n'
+	precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
+	export PROMPT=$'└─╼ %# '
 else
 	# Basic prompt without git info
-	PROMPT=$'\n┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} \n└─╼ %# '
+	NEWLINE=$'\n'
+	precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ' }
+	export PROMPT=$'└─╼ %# '
 fi
 
 # IF lazygit is installed
@@ -373,37 +385,14 @@ autoload -Uz colors
 colors
 
 
-
-# # Enable vi mode with ii
-# bindkey -M viins 'ii' vi-cmd-mode
-# # While in vi mode press Ctrl+i to enter a vim buffer 
-# # to compose a command
-# autoload -z edit-command-line
-# zle -N edit-command-line
-# bindkey -M vicmd '^i' edit-command-line
-#
-# function zle-line-init zle-keymap-select {
-#     case ${KEYMAP} in
-#         (vicmd)      PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL< ' ;;
-#         (main|viins) PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
-#         (*)          PROMPT=$'%{\n%}┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET} \n└─╼ $PROMPT_SYMBOL> ';;
-#     esac
-#     zle reset-prompt
-# }
-#
-# zle -N zle-line-init
-# zle -N zle-keymap-select
-
-
-
 # IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
 # %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
 
 # precmd() for multiline to fix zsh prompt redraw issues
 NEWLINE=$'\n'
-precmd() { print -rP  $'$NEWLINE┌─ ${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
-export PROMPT=$'└─╼ %# '
+precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
+export PROMPT=$'╰─> %# '
 
 
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
@@ -505,9 +494,23 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	  done
 	}
 	#### END
+	# export PROMPT=$'└─╼ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
+	# export PROMPT=$'└─╼ ┌─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
 
-	export PROMPT=$'└─╼ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
+	# Change to RED if command was not successful
+	error_status_prompt_color() {
+		if [[ $? -eq 0 || $? -eq 130 ]]; then
+			export PROMPT=$'╰─> [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
+		else 
+			export PROMPT=$'╰─> [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
+		fi
+	}
+	# Hook function into precmd so it runs before each prompt
+	autoload -Uz add-zsh-hook
+	add-zsh-hook precmd error_status_prompt_color	
 fi
+
+
 
 bindkey -M viins '^l' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
