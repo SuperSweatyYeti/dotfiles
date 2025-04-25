@@ -513,12 +513,15 @@ fi
 
 
 bindkey -M viins '^l' autosuggest-accept
+bindkey -M viins '^Y' autosuggest-accept
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
 # Don't need to use execute mode
 do-nothing-zsh() {}
 zle -N do-nothing-zsh
 bindkey -M vicmd ':' do-nothing-zsh
+bindkey -M vicmd '/' do-nothing-zsh
+bindkey -M vicmd '?' do-nothing-zsh
 
 
 HISTFILE=~/.zsh_history
