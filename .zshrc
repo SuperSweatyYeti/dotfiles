@@ -385,6 +385,9 @@ autoload -Uz colors
 colors
 
 
+
+# PROMPT if no vi-mode enabled
+
 # IMPORTANT new line character: \n  needs to be wrapped for zsh like this:
 # %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
@@ -392,7 +395,17 @@ colors
 # precmd() for multiline to fix zsh prompt redraw issues
 NEWLINE=$'\n'
 precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
-export PROMPT=$'╰─> %# '
+# Change prompt indicator to RED if command was not successful
+error_status_prompt_color() {
+	if [[ $? -eq 0 || $? -eq 130 ]]; then
+		export PROMPT=$'╰─ %{${COLOR6}%} ❯%{${RESET}%} '
+	else 
+		export PROMPT=$'╰─ %{${COLOR7}%} ❯%{${RESET}%} '
+	fi
+}
+# Hook function into precmd so it runs before each prompt
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd error_status_prompt_color	
 
 
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
