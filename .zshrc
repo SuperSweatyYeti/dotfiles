@@ -52,9 +52,9 @@ outty() {
 # Cheat function to curl for examples of a command using https://cheat.sh
 if command -v curl &>/dev/null; then
 	function cheatsh(){
-		# First argument will be the command we
-		# want to see examples for
-		curl https://cheat.sh/${1}
+		# Use curl in silent mode (-s) to avoid progress output in pipes
+		# and allow for proper piping
+		curl -s "https://cheat.sh/${1}"
 	}
 fi
 
