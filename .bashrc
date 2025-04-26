@@ -180,8 +180,8 @@ fi
 
 # Old Custom prompts
 # PS1 Prompt
-#PS1="\n┌─ $(tput setaf 46)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n└─╼ \$ "
-#PS1="\n┌─ $(tput bold; tput setaf 75)\u$(tput sgr0)@$(tput bold; tput setaf 176)\h$(tput sgr0) \[$(tput bold; tput setaf 116)\]\w\[$(tput sgr0)\] \n└─╼ \$ "
+#PS1="\n╭╴$(tput setaf 46)\u$(tput sgr0)@$(tput setaf 105)\h$(tput sgr0) \w \n╰─ \$ "
+#PS1="\n╭╴$(tput bold; tput setaf 75)\u$(tput sgr0)@$(tput bold; tput setaf 176)\h$(tput sgr0) \[$(tput bold; tput setaf 116)\]\w\[$(tput sgr0)\] \n╰─ \$ "
 
 # # Tokyo Night
 # # Define colors using termcap (tput alternative)
@@ -192,7 +192,7 @@ fi
 # RESET=$(tput sgr0)
 #
 # # Set the PS1 prompt
-# PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+# PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n╰─ \$ "
 
 # Function to get Git branch and status
 # git_prompt() {
@@ -230,7 +230,7 @@ COLOR5=$(
 RESET=$(tput sgr0)
 
 # Set the PS1 prompt
-PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n└─╼ \$ "
+PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n╰─ \$ "
 
 # Add some nice git status to the prompt ONLY if git is installed
 if command -v git &>/dev/null; then
@@ -306,7 +306,7 @@ if command -v git &>/dev/null; then
 		git remote get-url origin 2>/dev/null | sed -E 's/.*[:\/]([^\/]+)\/([^\/]+).*/\2/'
 	}
 	# Set Bash prompt
-	PS1="\n┌─ ${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n└─╼ \$ "
+	PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n╰─ \$ "
 fi
 
 # IF lazygit is installed without using brew
