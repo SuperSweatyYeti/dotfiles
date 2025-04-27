@@ -1,1 +1,3 @@
 /.config/tmux/plugins/*
+/.vscode
+/.vscode/*
