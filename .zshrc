@@ -523,7 +523,8 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	add-zsh-hook precmd error_status_prompt_color	
 fi
 
-
+# zsh syntax highlighting
+source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 bindkey -M viins '^l' autosuggest-accept
 bindkey -M viins '^Y' autosuggest-accept
