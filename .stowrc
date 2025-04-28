@@ -3,3 +3,4 @@
 --ignore=setup.sh
 --ignore=keyd.conf
 --ignore=fonts.sh
+--ignore=brave-setup.sh
