@@ -386,5 +386,7 @@ fi
 if command -v "carapace" &>/dev/null; then
 	export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense,nu' # optional
 	source <(carapace _carapace)
+	# No errors if when tabbing on unknown flags
+	export CARAPACE_LENIENT=1
 fi
 
