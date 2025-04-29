@@ -1,0 +1,10 @@
+[Unit]
+Description=Run a script at user login
+After=graphical-session.target
+
+[Service]
+ExecStart=%h/dotfiles/brave-setup.sh
+Type=oneshot
+
+[Install]
+WantedBy=default.target
