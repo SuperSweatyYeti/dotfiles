@@ -161,35 +161,15 @@ if command -v fzf &>/dev/null; then
 fi
 
 # Catppuccin Mocha
-# Define colors using termcap (tput alternative)
-COLOR1=$(
-	tput bold
-	tput setaf 75
-) # Blue (User)
-COLOR2=$(
-	tput bold
-	tput setaf 176
-) # Pink (Host)
-COLOR3=$(
-	tput bold
-	tput setaf 116
-) # Teal (Directory)
-COLOR4=$(
-	tput bold
-	tput setaf 215
-) # Bright Yellow-Orange (@ symbol)
-COLOR5=$(
-	tput bold
-) 
-COLOR6=$( # Green 
-	tput bold
-	tput setaf 151
-)
-COLOR7=$( # Red 
-	tput bold
-	tput setaf 168
-) # Bright Yellow-Orange (@ symbol)
-RESET=$(tput sgr0)
+# Define colors using Zsh's prompt expansion
+COLOR1="%B%F{75}"    # Blue (User)
+COLOR2="%B%F{176}"   # Bold Pink (Host)
+COLOR3="%B%F{116}"   # Bold Teal (Directory)
+COLOR4="%B%F{215}"   # Bold Yellow-Orange (@ symbol)
+COLOR5="%B"          # Just Bold
+COLOR6="%B%F{151}"   # Bold Green
+COLOR7="%B%F{168}"   # Bold Red
+RESET="%f%b"         # Reset formatting
 
 # Add some nice git status to the prompt ONLY if git is installed
 if command -v git &>/dev/null; then
