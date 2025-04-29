@@ -1,10 +1,12 @@
 [Unit]
-Description=Run a script at user login
+Description="Set Brave Browser Preferences"
 After=graphical-session.target
 
 [Service]
 ExecStart=%h/dotfiles/brave-setup.sh
 Type=oneshot
+SuccessExitStatus=0
 
 [Install]
 WantedBy=default.target
+
