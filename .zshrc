@@ -109,6 +109,13 @@ else
 	: # do nothing
 fi
 
+# fzf find hidden alias using find
+if command -v fzf &>/dev/null; then
+  fzf-hidden() {
+    find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf
+  }
+fi
+
 # If lsd is installed then use that for nicer listings
 if command -v lsd &>/dev/null; then
 	alias ls="lsd"
