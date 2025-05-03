@@ -112,7 +112,7 @@ fi
 # fzf find hidden alias using find
 if command -v fzf &>/dev/null; then
   fzf-hidden() {
-    find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf
+    find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf 
   }
 fi
 
@@ -158,12 +158,17 @@ if command -v fzf &>/dev/null; then
 			--preview-window '~4,+{2}+4/3,<80(up)'
 	}
 
-	alias cdfz='cd $(find . -type d -print | fzf ) '
+	alias cdfz='cd $(find . -type d -print | fzf  ) '
 	
 	# Load fzf ZSH completion and key bindings
 	if [ -f /usr/share/fzf/completion.zsh ]; then
 		source /usr/share/fzf/completion.zsh
 	fi
+
+
+
+
+
 
 fi
 
@@ -511,6 +516,12 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
 	autoload -Uz add-zsh-hook
 	add-zsh-hook precmd error_status_prompt_color	
 fi
+
+# fzf default keybinds use ctrl-y to accept
+if [[ ! "$FZF_DEFAULT_OPTS" =~ "--bind=ctrl-y:accept" ]]; then
+	FZF_DEFAULT_OPTS="--bind=ctrl-y:accept ${FZF_DEFAULT_OPTS}"
+fi
+export FZF_DEFAULT_OPTS
 
 # zsh syntax highlighting
 source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
