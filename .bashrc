@@ -397,7 +397,7 @@ if command -v "carapace" &>/dev/null; then
 	export CARAPACE_LENIENT=1
 fi
 
-# fzf default keybinds use ctrl-y to accept
+# fzf default keybinds AND plus use ctrl-y to accept
 if [[ ! "$FZF_DEFAULT_OPTS" =~ "--bind=ctrl-y:accept" ]]; then
 	FZF_DEFAULT_OPTS="--bind=ctrl-y:accept ${FZF_DEFAULT_OPTS}"
 fi
