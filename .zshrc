@@ -4,6 +4,12 @@ if [[ ! "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 	PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
 export PATH
+# Add cargo binaries to path
+CARGO_BIN_PATH="$HOME/.cargo/bin"
+if [[ ! "$PATH" =~ "$CARGO_BIN_PATH" ]]; then
+	PATH="$CARGO_BIN_PATH:$PATH"
+fi
+export PATH
 
 # Load any user specific scripts
 if [ -d ~/.zshrc.d ]; then
