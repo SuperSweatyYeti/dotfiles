@@ -364,6 +364,8 @@ fi
 # Auto-suggestions (if available)
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [ -f ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 # Enable ZSH features
