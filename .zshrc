@@ -99,6 +99,7 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
 
 # IF we are Fedora
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
+    alias sudoedit='sudo XDG_CONFIG_HOME="$HOME/.config" $EDITOR'
     # IF fzf is installed then
     if command -v fzf &>/dev/null; then
         if test -e /usr/share/fzf/shell/key-bindings.zsh; then
