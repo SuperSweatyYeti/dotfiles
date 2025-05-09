@@ -62,9 +62,9 @@ outty() {
   if command -v script &>/dev/null; then
     script -qc "$*" /dev/null
   elif command -v unbuffer &>/dev/null; then
-    unbuffer $@
+    unbuffer "$@"
   elif command -v stdbuf &>/dev/null; then
-    stdbuf -i0 -o0 -e0 $@
+    stdbuf -i0 -o0 -e0 "$@"
   else
     echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
     return 1
