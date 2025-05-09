@@ -1,5 +1,5 @@
 [opener]
 open = [
-	{ run = 'xdg-open "$@"', oprhan = true, desc = "Open" },
+	{ run = 'xdg-open "$@"', desc = "Open" },
 ]
-# ...
+
