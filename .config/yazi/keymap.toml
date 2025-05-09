@@ -3,7 +3,7 @@ prepend_keymap = [
 	{ on = "<C-h>", run = 'hidden toggle', desc = "Toggle hidden files" },
 	{ on = "?", run = 'help', desc = "Get help" },
 	# Exit yazi after opening the selected file
-	{ on = "<Enter>", run = [ 'open','quit' ], desc = "Open File" },
+	{ on = "<Enter>", run = [ 'open','quit' ], desc = "Open File AND quit yazi" },
 	# DON'T Exit yazi after opening the selected file
 	{ on = "o", run = 'open' , desc = "Open File" },
 
