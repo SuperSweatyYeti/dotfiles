@@ -119,7 +119,7 @@
                 ],
                 center: [
                     (kind: Property(Song(Artist)), style: (fg: "#A6E3A1", modifiers: "Bold"),
-                        default: (kind: Text("Unknown"), style: (fg: "yellow", modifiers: "Bold"))
+                        default: (kind: Text("Unknown"), style: (fg: "#A6E3A1", modifiers: "Bold"))
                     ),
                     (kind: Text(" - ")),
                     (kind: Property(Song(Album)),
