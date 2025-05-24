@@ -5,7 +5,7 @@
     address: "127.0.0.1:6600",
     password: None,
     // theme: "theme",
-    theme: "custom",
+    theme: "def",
     cache_dir: None,
     on_song_change: None,
     volume_step: 5,
@@ -16,7 +16,7 @@
     status_update_interval_ms: 1000,
     select_current_song_on_change: false,
     album_art: (
-        method: None,
+        method: Auto, // or None
         max_size_px: (width: 1200, height: 1200),
         disabled_protocols: ["http://", "https://"],
         vertical_align: Center,
@@ -36,8 +36,8 @@
             "'":       VolumeUp,
             "s":       Stop,
             "<Tab>":   NextTab,
-            "L":   NextTab,
-            "H": PreviousTab,
+            "L":       NextTab,
+            "H":       PreviousTab,
             "1":       SwitchToTab("Queue"),
             "2":       SwitchToTab("Directories"),
             "3":       SwitchToTab("Artists"),
