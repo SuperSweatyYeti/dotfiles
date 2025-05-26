@@ -2,11 +2,11 @@
 #![enable(unwrap_newtypes)]
 #![enable(unwrap_variant_newtypes)]
 (
-    address: "127.0.0.1:6600",
+    address: "~/.config/mpd/mpd_socket",
     password: None,
     // theme: "theme",
     theme: "def",
-    cache_dir: None,
+    cache_dir: "/tmp/rmpc/cache", // For youtube playback
     on_song_change: None,
     volume_step: 5,
     max_fps: 30,
