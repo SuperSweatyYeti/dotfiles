@@ -113,14 +113,14 @@
                                                 on_style: (fg: "#f9e2af", modifiers: "Bold"),
                                                 off_style: (fg: "#89b4fa", modifiers: "Dim"),
                                             )))),
-                                            (kind: Text(" /  ")),
+                                            (kind: Text(" / ")),
                                             (kind: Property(Status(RandomV2(
                                                 on_label: " ",
                                                 off_label: " ",
                                                 on_style: (fg: "#f9e2af", modifiers: "Bold"),
                                                 off_style: (fg: "#89b4fa", modifiers: "Dim"),
                                             )))),
-                                            (kind: Text(" /  ")),
+                                            (kind: Text(" / ")),
                                             (kind: Property(Status(ConsumeV2(
                                                 on_label: " ",
                                                 off_label: " ",
@@ -129,7 +129,7 @@
                                                 off_style: (fg: "#89b4fa", modifiers: "Dim"),
                                                 oneshot_style: (fg: "#f38ba8", modifiers: "Bold"),
                                             )))),
-                                            (kind: Text(" /  ")),
+                                            (kind: Text(" / ")),
                                             (kind: Property(Status(SingleV2(
                                                 on_label: "󰑘 ",
                                                 off_label: "󰑘 ",
