@@ -52,7 +52,7 @@ background-opacity = 0.8
 background-blur = true
 
 ## Font
-font-family = "DejaVuSansM Nerd Font Mono"
+font-family = "DejaVuSansM Nerd Font"
 font-size = 15
 
 
