@@ -74,6 +74,11 @@ elif command -v vim &>/dev/null; then
     SUDO_EDITOR='vim'
 fi
 
+# Set Syntax highlighting for man pages with bat
+# if command -v bat &>/dev/null; then
+#     export MANPAGER="bash -c 'col -bx | bat -l man -p'"
+# fi
+
 # Distro Specific settings
 # IF we are Ubuntu
 if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
