@@ -4,18 +4,26 @@ if [[ ! "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
 export PATH
+
 # Add cargo/rust binaries to path
 CARGO_BIN_PATH="$HOME/.cargo/bin"
 if [[ ! "$PATH" =~ "$CARGO_BIN_PATH" ]]; then
     PATH="$CARGO_BIN_PATH:$PATH"
 fi
 export PATH
+
 # Add go binaries to path
 GO_BIN_PATH="$HOME/go/bin"
 if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
     PATH="$GO_BIN_PATH:$PATH"
 fi
 export PATH
+
+# alias for rmpc ( Terminal music player ) launch with
+# no album art config
+if command -v rmpc &>/dev/null; then
+  alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+fi
 
 # Load any user specific scripts
 if [ -d ~/.zshrc.d ]; then
