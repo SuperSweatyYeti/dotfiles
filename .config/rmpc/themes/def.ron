@@ -57,7 +57,7 @@
                                             content: [
                                                 (kind: Property(Song(Filename)), style: (modifiers: "Bold"),
                                                     default: (kind: Text("No Song"), style: (modifiers: "Bold")))
-                                            ], align: Center, scroll_speed: 1
+                                            ], align: Center, scroll_speed: 2
                                         )),
                                     ),
                                     (
@@ -101,7 +101,7 @@
                                                     default: (kind: Text("Unknown"), style: (fg: "#a6e3a1", modifiers: "Bold"))),
                                                 (kind: Text(" - ")),
                                                 (kind: Property(Song(Album)), default: (kind: Text("Unknown Album")))
-                                            ], align: Center, scroll_speed: 2
+                                            ], align: Center, scroll_speed: 1 
                                         )),
                                     ),
                                     (
@@ -112,6 +112,15 @@
                                                 off_label: " ",
                                                 on_style: (fg: "#f9e2af", modifiers: "Bold"),
                                                 off_style: (fg: "#89b4fa", modifiers: "Dim"),
+                                            )))),
+                                            (kind: Text(" / ")),
+                                            (kind: Property(Status(SingleV2(
+                                                on_label: "󰑘 ",
+                                                off_label: "󰑘 ",
+                                                oneshot_label: "󰑘 ",
+                                                on_style: (fg: "#f9e2af", modifiers: "Bold"),
+                                                off_style: (fg: "#89b4fa", modifiers: "Dim"),
+                                                oneshot_style: (fg: "#f38ba8", modifiers: "Bold"),
                                             )))),
                                             (kind: Text(" / ")),
                                             (kind: Property(Status(RandomV2(
@@ -125,15 +134,6 @@
                                                 on_label: " ",
                                                 off_label: " ",
                                                 oneshot_label: " ",
-                                                on_style: (fg: "#f9e2af", modifiers: "Bold"),
-                                                off_style: (fg: "#89b4fa", modifiers: "Dim"),
-                                                oneshot_style: (fg: "#f38ba8", modifiers: "Bold"),
-                                            )))),
-                                            (kind: Text(" / ")),
-                                            (kind: Property(Status(SingleV2(
-                                                on_label: "󰑘 ",
-                                                off_label: "󰑘 ",
-                                                oneshot_label: "󰑘 ",
                                                 on_style: (fg: "#f9e2af", modifiers: "Bold"),
                                                 off_style: (fg: "#89b4fa", modifiers: "Dim"),
                                                 oneshot_style: (fg: "#f38ba8", modifiers: "Bold"),
@@ -247,9 +247,9 @@
         ),
         (
             prop: (kind: Property(Duration), default: (kind: Text("-"))),
-            width: "5",
-            alignment: Right,
-            label: "Duration"
+            width: "7",
+            alignment: Left,
+            label: "Length"
         ),
     ],
     header: (rows: []),
