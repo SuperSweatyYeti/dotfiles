@@ -3,6 +3,7 @@
 #![enable(unwrap_variant_newtypes)]
 (
     address: "~/.config/mpd/mpd_socket",
+    // address: "localhost",
     password: None,
     // theme: "theme",
     theme: "def",
