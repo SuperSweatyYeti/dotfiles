@@ -2,3 +2,4 @@
 /.config/mpd/state
 /.vscode
 /.vscode/*
+/.config/systemd/user/default.target.wants/*
