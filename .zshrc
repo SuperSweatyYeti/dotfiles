@@ -4,10 +4,16 @@ if [[ ! "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
 export PATH
-# Add cargo binaries to path
+# Add cargo/rust binaries to path
 CARGO_BIN_PATH="$HOME/.cargo/bin"
 if [[ ! "$PATH" =~ "$CARGO_BIN_PATH" ]]; then
     PATH="$CARGO_BIN_PATH:$PATH"
+fi
+export PATH
+# Add go binaries to path
+GO_BIN_PATH="$HOME/go/bin"
+if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
+    PATH="$GO_BIN_PATH:$PATH"
 fi
 export PATH
 
