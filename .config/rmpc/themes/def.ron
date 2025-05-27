@@ -57,7 +57,7 @@
                                             content: [
                                                 (kind: Property(Song(Filename)), style: (modifiers: "Bold"),
                                                     default: (kind: Text("No Song"), style: (modifiers: "Bold")))
-                                            ], align: Center, scroll_speed: 2
+                                            ], align: Center, scroll_speed: 1
                                         )),
                                     ),
                                     (
