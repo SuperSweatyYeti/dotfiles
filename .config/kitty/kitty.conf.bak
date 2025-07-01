@@ -1259,9 +1259,9 @@ shell_integration no-cursor
 ## blurb:    Soothing pastel theme for the high-spirited!
 
 # text
-# foreground           #cdd6f4
+foreground           #cdd6f4
 # base
-# background           #1e1e2e
+background           #1e1e2e
 # subtext0
 title_fg             #a6adc8
 
@@ -2751,9 +2751,3 @@ select_fg            #cdd6f4
 
 #: }}}
 
-
-
-# BEGIN_KITTY_THEME
-# Gruvbox Dark
-include current-theme.conf
-# END_KITTY_THEME
