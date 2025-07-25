@@ -8,7 +8,7 @@ sudo dnf install git stow unzip fzf fd-find ripgrep make automake gcc gcc-c++ -y
 ```
 Ubuntu
 ```bash
-sudo apt install git stow gcc build-essentials unzip fzf fd-find ripgrep -y
+sudo apt install git stow gcc build-essential unzip fzf fd-find ripgrep -y
 ```
 
 # Download repo with submodules
