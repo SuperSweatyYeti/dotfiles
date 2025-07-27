@@ -298,7 +298,7 @@ if command -v lazygit &>/dev/null; then
 fi
 # IF lazydocker is installed
 if command -v lazydocker &>/dev/null; then
-    alias lazyd='lazydocker'
+    alias ldoc='lazydocker'
 fi
 
 # Yazi config
@@ -342,7 +342,7 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
     fi
     # IF lazydocker is installed
     if command -v lazydocker &>/dev/null; then
-        alias lazyd='lazydocker'
+        alias ldoc='lazydocker'
     fi
     # Yazi config
     # ONLY if yazi is installed through brew
