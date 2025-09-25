@@ -47,7 +47,7 @@
 ## Theme customization
 # theme = "catppuccin-mocha"
 # theme = "tokyonight"
-theme = "gruvbox-material"
+theme = "Gruvbox Material"
 background-opacity = 0.8
 background-blur = true
 
