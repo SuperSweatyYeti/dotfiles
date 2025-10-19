@@ -1,4 +1,5 @@
 /.config/tmux/plugins/*
+/.config/putty/randomseed
 /.config/mpd/state
 /.config/mpd/playlists/*
 /.config/mpd/playlists
