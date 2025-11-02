@@ -151,7 +151,7 @@ else
 fi
 
 if command -v kde-open &>/dev/null; then
-    alias kdelogout="qdbus org.kde.LogoutPrompt /LogoutPrompt  org.kde.LogoutPrompt.promptLogout"
+    alias kdelogout="qdbus org.kde.Shutdown /Shutdown logout"
 fi
 
 # fzf function IF fzf is installed
