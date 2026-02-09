@@ -19,6 +19,7 @@ if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
 fi
 export PATH
 
+
 # alias for rmpc ( Terminal music player ) launch with
 # no album art config
 if command -v rmpc &>/dev/null; then
@@ -75,6 +76,15 @@ if command -v curl &>/dev/null; then
         # Use curl in silent mode (-s) to avoid progress output in pipes
         # and allow for proper piping
         curl -s "https://cheat.sh/${1}"
+    }
+fi
+
+# Clear print jobs
+if command -v cancel &>/dev/null; then
+    function print-clear(){
+        # Cancel jobs
+        cancel -a
+        sudo systemctl restart cups.service
     }
 fi
 
