@@ -1,0 +1,6 @@
+# ~/.bashdbinit
+
+
+# Define alias commands
+alias p print
+

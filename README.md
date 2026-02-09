@@ -42,6 +42,7 @@ Install brew for other apps like [ yazi ]( https://github.com/sxyazi/yazi  )( Be
 ```bash
 source ~/.bashrc
 brew install yazi 
+brew install bashdb
 source ~/.bashrc
 ```
 # Neovim plugin dependencies
