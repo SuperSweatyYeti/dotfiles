@@ -432,15 +432,22 @@ colors
 # %{\n%}
 # Update the prompt - replace %# with $PROMPT_SYMBOL
 
+# Python venv status for prompt
+python_venv_prompt() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo -n "(%F{cyan}$(basename "$VIRTUAL_ENV")%f) "
+    fi
+}
+
 # precmd() for multiline to fix zsh prompt redraw issues
 NEWLINE=$'\n'
 precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
 # Change prompt indicator to RED if command was not successful
 error_status_prompt_color() {
     if [[ $? -eq 0 || $? -eq 130 ]]; then
-        export PROMPT=$'╰─ %{${COLOR6}%} ❯%{${RESET}%} '
+        export PROMPT=$'╰─ $(python_venv_prompt)%{${COLOR6}%} ❯%{${RESET}%} '
     else 
-        export PROMPT=$'╰─ %{${COLOR7}%} ❯%{${RESET}%} '
+        export PROMPT=$'╰─ $(python_venv_prompt)%{${COLOR7}%} ❯%{${RESET}%} '
     fi
 }
 # Hook function into precmd so it runs before each prompt
@@ -546,15 +553,13 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
       done
     }
     #### END
-    # export PROMPT=$'└─╼ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
-    # export PROMPT=$'└─╼ ┌─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}] %# '
 
     # Change to RED if command was not successful
     error_status_prompt_color() {
         if [[ $? -eq 0 || $? -eq 130 ]]; then
-            export PROMPT=$'╰─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
+            export PROMPT=$'╰─ $(python_venv_prompt)[%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
         else 
-            export PROMPT=$'╰─ [%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
+            export PROMPT=$'╰─ $(python_venv_prompt)[%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
         fi
     }
     # Hook function into precmd so it runs before each prompt
