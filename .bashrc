@@ -257,8 +257,15 @@ COLOR5=$(
 ) # Bright Yellow-Orange (@ symbol)
 RESET=$(tput sgr0)
 
+# Python venv status for prompt
+python_venv_prompt() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo -n "($(tput setaf 6)$(basename "$VIRTUAL_ENV")${RESET}) "
+    fi
+}
+
 # Set the PS1 prompt
-PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n╰─ \$ "
+PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} \n╰─ \$(python_venv_prompt)\$ "
 
 # Add some nice git status to the prompt ONLY if git is installed
 if command -v git &>/dev/null; then
@@ -326,7 +333,7 @@ if command -v git &>/dev/null; then
         fi
 
         # Return the prompt string
-        echo -n "$prompt" ⇒
+        echo -n "$prompt"
     }
 
     git_repo_name() {
@@ -334,7 +341,7 @@ if command -v git &>/dev/null; then
         git remote get-url origin 2>/dev/null | sed -E 's/.*[:\/]([^\/]+)\/([^\/]+).*/\2/'
     }
     # Set Bash prompt
-    PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n╰─ \$ "
+    PS1="\n╭╴${COLOR1}\u${RESET}${COLOR4}@${RESET}${COLOR2}\h${RESET} ${COLOR3}\w${RESET} ${COLOR5}\$(git_prompt) \$(git_repo_name)${RESET} \n╰─ \$(python_venv_prompt)\$ "
 fi
 
 # IF lazygit is installed without using brew
