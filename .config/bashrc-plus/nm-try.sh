@@ -50,42 +50,55 @@ fi
 # =============================================================================
 
 # Default values
-TIMEOUT=60
 CONNECTION_NAME=""
+CONNECTION_CREATED=false
 BACKUP_DIR="/tmp/nm-backup-$(date +%s)"
-
-# Cleanup function for trap
+BACKUP_DIR="/tmp/nm-backup-$(date +%s)"
 cleanup_and_rollback() {
     echo ""
     echo ""
-    echo "⚠ Interrupted! Rolling back changes..."
+
+    if [ "$CONNECTION_CREATED" != true ]; then
+        echo "No connection was successfully created/modified. Nothing to rollback."
+        rm -rf "$BACKUP_DIR"
+        exit 1
+    fi
+
+    echo "⚠ Rolling back changes..."
     
     # Delete new connection if it was created
     if [ -n "$CONNECTION_NAME" ]; then
-        nmcli connection delete "$CONNECTION_NAME" 2>/dev/null
+        echo "Deleting connection: $CONNECTION_NAME"
+        if nmcli connection delete "$CONNECTION_NAME" 2>/dev/null; then
+            echo "✓ Connection '$CONNECTION_NAME' removed."
+        else
+            echo "⚠ Could not delete connection '$CONNECTION_NAME'."
+        fi
     fi
     
-    # Restore backup if it exists
-    if [ -d "$BACKUP_DIR" ]; then
-        rm -rf /etc/NetworkManager/system-connections/*
-        cp -r "$BACKUP_DIR"/* /etc/NetworkManager/system-connections/ 2>/dev/null
-        chmod 600 /etc/NetworkManager/system-connections/* 2>/dev/null
+    # Restore backup only if original connections were modified/removed
+    if [ -d "$BACKUP_DIR" ] && [ -n "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
+        # Check if any original connections are missing
+        NEEDS_RESTORE=false
+        for f in "$BACKUP_DIR"/*; do
+            fname=$(basename "$f")
+            if [ ! -f "/etc/NetworkManager/system-connections/$fname" ]; then
+                NEEDS_RESTORE=true
+                break
+            fi
+        done
         
-        # Reload NetworkManager
-        nmcli connection reload
-        
-        # Try to bring up previous default connection
-        OLD_CONNECTION=$(ls -t "$BACKUP_DIR" | head -1 | sed 's/.nmconnection$//')
-        if [ -n "$OLD_CONNECTION" ]; then
-            echo "Attempting to restore: $OLD_CONNECTION"
-            nmcli connection up "$OLD_CONNECTION" 2>/dev/null || true
+        if [ "$NEEDS_RESTORE" = true ]; then
+            echo "Restoring previous connections..."
+            cp -r "$BACKUP_DIR"/* /etc/NetworkManager/system-connections/ 2>/dev/null
+            chmod 600 /etc/NetworkManager/system-connections/*.nmconnection 2>/dev/null
+            nmcli connection reload
+            echo "✓ Previous connections restored."
         fi
-        
-        echo "✓ Rolled back to previous configuration!"
-        
-        # Clean up backup directory
-        rm -rf "$BACKUP_DIR"
     fi
+
+    rm -rf "$BACKUP_DIR"
+    echo "✓ Rollback complete."
     
     exit 1
 }
@@ -129,36 +142,38 @@ done
 # Validate timeout
 if ! [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || [ "$TIMEOUT" -lt 1 ]; then
     trap - EXIT
-    echo "Error: --timeout-seconds must be a positive integer"
-    exit 1
-fi
-
 echo "Creating backup of current connections..."
 mkdir -p "$BACKUP_DIR"
-cp -r /etc/NetworkManager/system-connections/* "$BACKUP_DIR/" 2>/dev/null || true
-
+CONN_FILES=(/etc/NetworkManager/system-connections/*)
+if [ -e "${CONN_FILES[0]}" ]; then
+    cp -r /etc/NetworkManager/system-connections/* "$BACKUP_DIR/"
+    echo "✓ Backup created at $BACKUP_DIR ($(ls "$BACKUP_DIR" | wc -l) files)"
+else
+    echo "⚠ No existing connections to back up (empty backup)"
+fi
+    echo "⚠ No existing connections to back up (empty backup)"
+fi
 echo "Applying new configuration..."
 
 # =============================================================================
 # CONFIGURATION SECTION - Uncomment and modify the section you need
-# =============================================================================
-
-# -----------------------------------------------------------------------------
-# Example 1: Static WiFi (currently active)
-# -----------------------------------------------------------------------------
-nmcli connection add \
+CONNECTION_NAME="TestStaticWiFi"
+if ! nmcli connection add \
   type wifi \
-  ifname wlan0 \
-  con-name "TestStaticWiFi" \
+  ifname wlp3s0 \
+  con-name "$CONNECTION_NAME" \
   ssid "CL3DMA" \
   wifi-sec.key-mgmt wpa-psk \
-  wifi-sec.psk "YourPassword" \
+  wifi-sec.psk "estefania99" \
   ipv4.method manual \
-  ipv4.addresses 192.168.1.100/24 \
-  ipv4.gateway 192.168.1.1 \
-  ipv4.dns "8.8.8.8 8.8.4.4"
+  ipv4.addresses 192.168.23.51/23 \
+  ipv4.gateway 192.168.22.1 \
+  ipv4.dns "8.8.8.8 8.8.4.4"; then
+    echo "ERROR: Failed to create connection!"
+    exit 1
+fi
+CONNECTION_CREATED=true
 
-CONNECTION_NAME="TestStaticWiFi"
 
 # -----------------------------------------------------------------------------
 # Example 2: DHCP WiFi
@@ -313,46 +328,52 @@ echo ""
 echo "=========================================="
 echo "New configuration applied!"
 echo "Connection: $CONNECTION_NAME"
-echo "Timeout: $TIMEOUT seconds"
-echo "=========================================="
-echo ""
-echo "Testing network connectivity..."
-
-# Quick connectivity test
-if ping -c 2 -W 3 8.8.8.8 &>/dev/null; then
-    echo "✓ Internet connectivity confirmed"
-else
-    echo "⚠ Warning: No internet connectivity detected"
+if ! nmcli connection up "$CONNECTION_NAME" 2>&1; then
+    echo ""
+    echo "ERROR: Failed to activate connection!"
+    echo ""
+    echo "Common causes:"
+    echo "  - Wrong interface name (check: nmcli device status)"
+    echo "  - WiFi adapter not available"
+    echo "  - Incorrect SSID or password"
+    exit 1
 fi
+    echo "⚠ Warning: No internet connectivity detected"
 
 echo ""
-echo "Current IP configuration:"
-ip addr show | grep -E "inet |inet6 " | grep -v "127.0.0.1" | grep -v "::1"
-echo ""
-
+echo "Current IP configuration for '$CONNECTION_NAME':"
+nmcli connection show "$CONNECTION_NAME" | grep -E "^(IP4\.|IP6\.|GENERAL\.DEVICES|connection\.interface-name)"
 echo "Do you want to keep these settings?"
-echo "Press ENTER within $TIMEOUT seconds to keep, or wait to rollback..."
+echo "Type 'yes' or 'y' within $TIMEOUT seconds to keep, or wait to rollback..."
 echo "Press Ctrl+C to rollback immediately"
 echo ""
 
 # Read with timeout
-if read -t "$TIMEOUT" -p "Press ENTER to accept: " response; then
-    echo ""
-    echo "✓ Configuration accepted! Cleaning up backup..."
-    
-    # Disable trap before successful exit
-    trap - EXIT SIGINT SIGTERM SIGHUP
-    
-    rm -rf "$BACKUP_DIR"
-    echo "✓ Done! Connection '$CONNECTION_NAME' is now active."
-    echo ""
-    echo "To view connection details: nmcli connection show '$CONNECTION_NAME'"
-    echo "To modify: nmcli connection modify '$CONNECTION_NAME' [options]"
-    echo "To delete: nmcli connection delete '$CONNECTION_NAME'"
-    exit 0
+if read -r -t "$TIMEOUT" -p "Accept new configuration? [y/yes]: " response; then
+    case "$response" in
+        [Yy]|[Yy][Ee][Ss])
+            echo ""
+            echo "✓ Configuration accepted! Cleaning up backup..."
+            
+            # Disable trap before successful exit
+            trap - EXIT SIGINT SIGTERM SIGHUP
+            
+            rm -rf "$BACKUP_DIR"
+            echo "✓ Done! Connection '$CONNECTION_NAME' is now active."
+            echo ""
+            echo "To view connection details: nmcli connection show '$CONNECTION_NAME'"
+            echo "To modify: nmcli connection modify '$CONNECTION_NAME' [options]"
+            echo "To delete: nmcli connection delete '$CONNECTION_NAME'"
+            exit 0
+            ;;
+        *)
+            echo ""
+            echo "⚠ Invalid input: '$response'. Expected 'y' or 'yes'. Rolling back..."
+            exit 1
+            ;;
+    esac
 else
     echo ""
-    echo "⚠ Timeout reached. Rolling back..."
-    # Trap will handle the rollback
+    echo "⚠ Timeout reached ($TIMEOUT seconds). Rolling back..."
     exit 1
 fi
