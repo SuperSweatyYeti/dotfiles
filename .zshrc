@@ -208,6 +208,20 @@ if command -v fzf &>/dev/null; then
 
 fi
 
+# Disable default ZSH prompt seperator character on outputs that don't end with newline
+# Gets rid of output like this:
+#
+#╭╴duster@fedoray ~
+#╰─ [I] ❯ curl ipinfo.io/ip
+#80.51.52.106%
+#            ^
+#            ^
+#╭╴duster@fedoray ~
+#╰─ [I] ❯
+#
+# We arleady account for this by sending empty line before every new prompt
+unsetopt PROMPT_SP
+
 # Catppuccin Mocha
 # Define colors using Zsh's prompt expansion
 COLOR1="%B%F{75}"    # Blue (User)
