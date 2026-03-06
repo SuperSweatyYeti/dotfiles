@@ -629,4 +629,4 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect '^Y' accept-search
 
 # Obsidian Bridge neovim API
-export ***REMOVED***
+source .obsidian-api-key
