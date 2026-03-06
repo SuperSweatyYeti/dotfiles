@@ -26,7 +26,7 @@ if command -v rmpc &>/dev/null; then
   alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
 fi
 
-# aliases for obisdian headless sync
+# aliases for obsidian headless sync
 if command -v ob &>/dev/null; then
     # Sync status
     alias obsync-status="ob sync-status"
