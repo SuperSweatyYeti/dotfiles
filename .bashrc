@@ -31,6 +31,16 @@ if command -v rmpc &>/dev/null; then
   alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
 fi
 
+# aliases for obsidian headless sync
+if command -v ob &>/dev/null; then
+    # Sync status
+    alias obsync-status="ob sync-status"
+    # Run a one-time sync
+    alias obysnc-now="ob sync"
+    # Run continuous sync (watches for changes)
+    alias obsync-continuous="ob sync --continuous"
+fi
+
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
