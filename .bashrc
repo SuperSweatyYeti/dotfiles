@@ -36,7 +36,7 @@ if command -v ob &>/dev/null; then
     # Sync status
     alias obsync-status="ob sync-status"
     # Run a one-time sync
-    alias obysnc-now="ob sync"
+    alias obsync-now="ob sync"
     # Run continuous sync (watches for changes)
     alias obsync-continuous="ob sync --continuous"
 fi
