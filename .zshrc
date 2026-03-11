@@ -479,8 +479,6 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd error_status_prompt_color    
 
 
-# Use sourcing init mode to avoid ZLE reinit race with tmux OSC responses over SSH
-ZVM_INIT_MODE=sourcing
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
     # zsh-vi-mode plugin config
     ## Escape key
@@ -557,10 +555,8 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
     # when using the 'c' vim motions like 'cw' 'ciw' 'cW' 'caw' etc.
     #### START
     function zvm_after_select_vi_mode() {
-      # Only reset prompt if ZLE is active (not during plugin init)
-      # This prevents the OSC 11 response from tmux bleeding into the prompt
-      # when SSH'd in from Windows Terminal
-      [[ -n "$ZLE_STATE" ]] && zle reset-prompt
+      # Force redraw prompt when the vi mode changes
+      zle reset-prompt
     }
 
     # Add this handler to ensure change operations enter insert mode correctly
