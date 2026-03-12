@@ -163,6 +163,16 @@ if command -v fzf &>/dev/null; then
   }
 fi
 
+# Set Syntax highlighting for man pages with bat
+# Set bat as default pager
+if command -v bat &>/dev/null; then
+    # Fix weird escape characters for man pages
+    export MANROFFOPT='-c'
+    export MANPAGER="bash -c 'col -bx | bat -l man -p'"
+    # Set bat as default pager
+    export PAGER="bat --paging=always"
+fi
+
 # If lsd is installed then use that for nicer listings
 if command -v lsd &>/dev/null; then
     alias ls="lsd"
