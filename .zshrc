@@ -118,6 +118,105 @@ if command -v bat &>/dev/null; then
     export PAGER="bat --paging=always"
 fi
 
+########################################################
+# Switch display managers either sddm or gdm
+########################################################
+switchdm-gdm() {
+  local GDMservice="gdm.service"
+  local SDDMservice="sddm.service"
+
+  service_exists() {
+    local svc="$1"
+    [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
+  }
+
+  is_enabled() {
+    local svc="$1"
+    systemctl is-enabled "$svc" >/dev/null 2>&1
+  }
+
+  is_active() {
+    local svc="$1"
+    systemctl is-active "$svc" >/dev/null 2>&1
+  }
+
+  if ! service_exists "$GDMservice"; then
+    echo "$GDMservice does not exist."
+    return 1
+  fi
+
+  # Already on gdm (enabled + active)
+  if is_enabled "$GDMservice" && is_active "$GDMservice"; then
+    echo "$GDMservice is already enabled and active."
+    return 0
+  fi
+
+  # If sddm exists and is enabled/active, turn it off first
+  if service_exists "$SDDMservice"; then
+    if is_active "$SDDMservice"; then
+      sudo systemctl stop "$SDDMservice"
+    fi
+    if is_enabled "$SDDMservice"; then
+      sudo systemctl disable "$SDDMservice"
+    fi
+  fi
+
+  sudo systemctl enable "$GDMservice"
+  sudo systemctl start "$GDMservice"
+
+  echo "Switched to $GDMservice."
+  echo "If needed: sudo systemctl restart display-manager"
+}
+
+switchdm-sddm() {
+  local GDMservice="gdm.service"
+  local SDDMservice="sddm.service"
+
+  service_exists() {
+    local svc="$1"
+    [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
+  }
+
+  is_enabled() {
+    local svc="$1"
+    systemctl is-enabled "$svc" >/dev/null 2>&1
+  }
+
+  is_active() {
+    local svc="$1"
+    systemctl is-active "$svc" >/dev/null 2>&1
+  }
+
+  if ! service_exists "$SDDMservice"; then
+    echo "$SDDMservice does not exist."
+    return 1
+  fi
+
+  # Already on sddm (enabled + active)
+  if is_enabled "$SDDMservice" && is_active "$SDDMservice"; then
+    echo "$SDDMservice is already enabled and active."
+    return 0
+  fi
+
+  # If gdm exists and is enabled/active, turn it off first
+  if service_exists "$GDMservice"; then
+    if is_active "$GDMservice"; then
+      sudo systemctl stop "$GDMservice"
+    fi
+    if is_enabled "$GDMservice"; then
+      sudo systemctl disable "$GDMservice"
+    fi
+  fi
+
+  sudo systemctl enable "$SDDMservice"
+  sudo systemctl start "$SDDMservice"
+
+  echo "Switched to $SDDMservice."
+  echo "If needed: sudo systemctl restart display-manager"
+}
+
+
+
 # Distro Specific settings
 # IF we are Ubuntu
 if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
