@@ -7,7 +7,6 @@ local config = wezterm.config_builder()
 
 -- Cursor
 config.cursor_blink_rate = 500 -- milliseconds
--- Blinking cursor
 config.default_cursor_style = 'SteadyBlock'
 
 -- Initial geometry
@@ -52,6 +51,7 @@ local powershell_classic = {
     '#F2F2F2', -- bright white
   },
 }
+
 -- Default shell → PowerShell 7
 config.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
 
@@ -120,6 +120,7 @@ config.keys = {
       args = { 'cmd.exe' },
     },
   },
+
   -- Ctrl+Shift+4 → WSL Debian
   {
     key = 'phys:4',
@@ -130,27 +131,50 @@ config.keys = {
   },
 }
 
--- Per-profile color themes based on foreground process
-wezterm.on('update-status', function(window, pane)
-  local process = pane:get_foreground_process_name() or ''
-  local p = process:lower()
+-- Per-tab color scheme, detected ONCE on first update, reapplied on every update
+local tab_schemes = {}
 
-  if p:find('pwsh') then
-    -- PowerShell 7 → Catppuccin Mocha
+wezterm.on('update-status', function(window, pane)
+  local tab_id = tostring(window:active_tab():tab_id())
+
+  -- Only detect the scheme if we haven't seen this tab before
+  if not tab_schemes[tab_id] then
+    local process = pane:get_foreground_process_name() or ''
+    local p = process:lower()
+
+    local root = ''
+    local procs = pane:get_foreground_process_info()
+    if procs then
+      root = (procs.name or ''):lower()
+    end
+
+    -- Only store if we actually got a process, otherwise wait for next update
+    if p ~= '' or root ~= '' then
+      if p:find('pwsh') or root:find('pwsh') then
+        tab_schemes[tab_id] = 'pwsh'
+      elseif (p:find('powershell') or root:find('powershell')) and not p:find('pwsh') then
+        tab_schemes[tab_id] = 'powershell'
+      elseif root:find('wsl') then
+        tab_schemes[tab_id] = 'wsl'
+      elseif p:find('cmd') or root:find('cmd') then
+        tab_schemes[tab_id] = 'cmd'
+      else
+        tab_schemes[tab_id] = 'default'
+      end
+    end
+  end
+
+  -- Always reapply the stored scheme for this tab
+  local scheme = tab_schemes[tab_id]
+  if scheme == 'pwsh' then
     window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)' })
-  -- elseif p:find('powershell') then
-  --   -- Windows PowerShell → classic blue look
-  --   window:set_config_overrides({ color_scheme = 'Cobalt2' })
-  elseif p:find('powershell') then
-    -- Windows PowerShell 5.1 exact colors
-    window:set_config_overrides({
-      colors = powershell_classic,
-    })
-  elseif p:find('wsl') or p:find('bash') or p:find('debian') or p:find('ubuntu') then
-    -- WSL → Ubuntu colors
+  elseif scheme == 'powershell' then
+    window:set_config_overrides({ colors = powershell_classic })
+  elseif scheme == 'wsl' then
     window:set_config_overrides({ color_scheme = 'Ubuntu' })
+  elseif scheme == 'cmd' then
+    window:set_config_overrides({ color_scheme = 'Campbell (Windows Terminal)' })
   else
-    -- CMD / anything else → Catppuccin Mocha
     window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)' })
   end
 end)
