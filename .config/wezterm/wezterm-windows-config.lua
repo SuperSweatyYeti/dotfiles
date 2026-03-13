@@ -8,9 +8,9 @@ local config = wezterm.config_builder()
 
 config.window_padding = {
   left = '1cell',
-  right = '1cell',
+  right = '1.5cell',
   top = '0.2cell',
-  bottom = '0.2cell',
+  bottom = '0.3cell',
 }
 
 -- Scrolling
@@ -105,7 +105,7 @@ config.keys = {
   { key = 'c',     mods = 'CTRL|SHIFT', action = act.CopyTo 'Clipboard' },
   { key = 'v',     mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },
   { key = 't',     mods = 'CTRL|SHIFT', action = act.SpawnTab 'CurrentPaneDomain' },
-  { key = 'w',     mods = 'CTRL|SHIFT', action = act.CloseCurrentTab { confirm = true } },
+  { key = 'q',     mods = 'CTRL|SHIFT', action = act.CloseCurrentTab { confirm = true } },
   { key = 'Tab',   mods = 'CTRL',       action = act.ActivateTabRelative(1) },
   { key = 'Tab',   mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(-1) },
   { key = 'Space', mods = 'CTRL|SHIFT', action = act.ShowLauncherArgs { flags = 'LAUNCH_MENU_ITEMS' } },
@@ -115,7 +115,8 @@ config.keys = {
   { key = '+',     mods = 'CTRL',       action = act.IncreaseFontSize },
   { key = '-',     mods = 'CTRL',       action = act.DecreaseFontSize },
   { key = '0',     mods = 'CTRL',       action = act.ResetFontSize },
-
+  -- Command palette
+  { key = 'p', mods = 'CTRL|SHIFT', action = act.ShowLauncherArgs { flags = 'FUZZY|COMMANDS' } },
   -- Ctrl+Shift+1 → PowerShell 7
   {
     key = 'phys:1',
