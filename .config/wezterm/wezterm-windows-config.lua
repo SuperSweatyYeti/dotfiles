@@ -5,6 +5,24 @@ local act = wezterm.action
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
+
+config.window_padding = {
+  left = '1cell',
+  right = '1cell',
+  top = '0.2cell',
+  bottom = '0.2cell',
+}
+
+-- Scrolling
+-- Enable the scrollbar.
+-- It will occupy the right window padding space.
+-- If right padding is set to 0 then it will be increased
+-- to a single cell width
+config.enable_scroll_bar = true
+-- How many lines of scrollback you want to retain per tab
+config.scrollback_lines = 50000
+
+
 -- Cursor
 config.cursor_blink_rate = 500 -- milliseconds
 config.default_cursor_style = 'SteadyBlock'
@@ -20,9 +38,13 @@ config.enable_kitty_graphics = true
 config.font = wezterm.font 'Hack Nerd Font'
 config.font_size = 13
 config.color_scheme = 'Catppuccin Mocha (Gogh)'
+config.colors = {
+  scrollbar_thumb = '#9b9b9b',
+}
 
 -- Windows PowerShell 5.1 exact colors
 local powershell_classic = {
+  scrollbar_thumb = '#9b9b9b',
   background = '#012456',
   foreground = '#EEEDF0',
   cursor_bg = '#EEEDF0',
@@ -139,6 +161,7 @@ config.keys = {
   { key = 'RightArrow', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Right' },
   { key = 'UpArrow',    mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Up'    },
   { key = 'DownArrow',  mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Down'  },
+
   -- Cycle between tabs
   { key = '{', mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(1)  },
   { key = '}', mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(-1) },
@@ -186,15 +209,15 @@ wezterm.on('update-status', function(window, pane)
   -- Always reapply the stored scheme for this tab
   local scheme = tab_schemes[tab_id]
   if scheme == 'pwsh' then
-    window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)' })
+    window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)', colors = { scrollbar_thumb = '#9b9b9b' } })
   elseif scheme == 'powershell' then
     window:set_config_overrides({ colors = powershell_classic })
   elseif scheme == 'wsl' then
-    window:set_config_overrides({ color_scheme = 'Ubuntu' })
+    window:set_config_overrides({ color_scheme = 'Ubuntu', colors = { scrollbar_thumb = '#9b9b9b' } })
   elseif scheme == 'cmd' then
-    window:set_config_overrides({ color_scheme = 'Campbell (Windows Terminal)' })
+    window:set_config_overrides({ color_scheme = 'Campbell (Windows Terminal)', colors = { scrollbar_thumb = '#9b9b9b' } })
   else
-    window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)' })
+    window:set_config_overrides({ color_scheme = 'Catppuccin Mocha (Gogh)', colors = { scrollbar_thumb = '#9b9b9b' } })
   end
 end)
 
