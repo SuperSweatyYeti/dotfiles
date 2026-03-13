@@ -129,6 +129,25 @@ config.keys = {
       args = { 'wsl.exe', '-d', 'Debian' },
     },
   },
+
+  -- Split panes
+  { key = 'd', mods = 'CTRL|SHIFT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  { key = 'e', mods = 'CTRL|SHIFT', action = act.SplitVertical   { domain = 'CurrentPaneDomain' } },
+
+  -- Move between panes
+  { key = 'LeftArrow',  mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Left'  },
+  { key = 'RightArrow', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Right' },
+  { key = 'UpArrow',    mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Up'    },
+  { key = 'DownArrow',  mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Down'  },
+  -- Cycle between tabs
+  { key = '{', mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(1)  },
+  { key = '}', mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(-1) },
+
+  -- Close current pane
+  { key = 'x', mods = 'CTRL|SHIFT', action = act.CloseCurrentPane { confirm = true } },
+
+  -- Pane launcher (separate from tab launcher) → Alt+Shift+Space
+  { key = 'Space', mods = 'ALT|SHIFT', action = act.ShowLauncherArgs { flags = 'TABS' } },
 }
 
 -- Per-tab color scheme, detected ONCE on first update, reapplied on every update
