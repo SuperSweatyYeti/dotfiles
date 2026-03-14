@@ -31,6 +31,12 @@ cd ~/dotfiles/.config/tmux/plugins/tmp
 git checkout master
 ```
 
+# Use stow to create symlinks
+```bash
+cd ~/dotfiles
+stow . --adopt
+```
+
 # Other Recommended dependencies to install
 
 Install brew for other apps like [ yazi ]( https://github.com/sxyazi/yazi  )( Best terminal file manager right now )
