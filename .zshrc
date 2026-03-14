@@ -586,9 +586,9 @@ add-zsh-hook precmd error_status_prompt_color
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
     # zsh-vi-mode plugin config
     ## Escape key
-    ZVM_VI_INSERT_ESCAPE_BINDKEY=ii
-    ZVM_VI_ESCAPE_BINDKEY=ii
-    ZVM_VI_VISUAL_ESCAPE_BINDKEY=ii
+    ZVM_VI_INSERT_ESCAPE_BINDKEY=JJ
+    ZVM_VI_ESCAPE_BINDKEY=JJ
+    ZVM_VI_VISUAL_ESCAPE_BINDKEY=JJ
     # Surround with s key prefix
     # add surrounding quotes with sa"
     ZVM_VI_SURROUND_BINDKEY=s-prefix
