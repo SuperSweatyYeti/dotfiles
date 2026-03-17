@@ -315,25 +315,9 @@ if command -v fzf &>/dev/null; then
         source /usr/share/fzf/completion.zsh
     fi
 
-
-
-
-
-
 fi
 
 # Disable default ZSH prompt seperator character on outputs that don't end with newline
-# Gets rid of output like this:
-#
-#╭╴duster@fedoray ~
-#╰─ [I] ❯ curl ipinfo.io/ip
-#80.51.52.106%
-#            ^
-#            ^
-#╭╴duster@fedoray ~
-#╰─ [I] ❯
-#
-# We arleady account for this by sending empty line before every new prompt
 unsetopt PROMPT_SP
 
 # Catppuccin Mocha
@@ -346,6 +330,265 @@ COLOR5="%B"          # Just Bold
 COLOR6="%B%F{151}"   # Bold Green
 COLOR7="%B%F{168}"   # Bold Red
 RESET="%f%b"         # Reset formatting
+
+
+# ── Chezmoi Background Job + Functions ───────────────────────────────
+# All chezmoi functions are wrapped in this check.
+# If chezmoi is not installed, none of these functions are defined
+# and the prompt segment is a no-op.
+CHEZMOI_INSTALLED=0
+if command -v chezmoi &>/dev/null; then
+    CHEZMOI_INSTALLED=1
+    alias cmoi='chezmoi'
+
+    cmoicd() {
+        local chezmoi_dir="$HOME/.local/share/chezmoi"
+        [[ -d "$chezmoi_dir" ]] && cd "$chezmoi_dir"
+    }
+
+    cmoisync() {
+        local chezmoi_dir="$HOME/.local/share/chezmoi"
+        [[ -d "$chezmoi_dir" ]] || return
+
+        git -C "$chezmoi_dir" add -A
+        if [[ -z "$(git -C "$chezmoi_dir" status --porcelain)" ]]; then
+            echo "\033[90mcmoisync: nothing to commit, already up to date.\033[0m"
+            return
+        fi
+        git -C "$chezmoi_dir" commit -m "update $(date '+%Y-%m-%d %H:%M:%S')"
+        git -C "$chezmoi_dir" push --force
+    }
+
+    # -- Watched folders for unmanaged file detection -----
+    CHEZMOI_WATCHED_FOLDERS=(
+        # "$HOME/.config/yazi"
+        # Add more folders here:
+        # "$HOME/.config/some-app"
+    )
+
+    # -- Cache (read by prompt — zero cost) -----
+    CHEZMOI_STATUS_CACHE=""
+    CHEZMOI_UNMANAGED_CACHE=()
+    CHEZMOI_UNMANAGED_COUNT=0
+
+    # -- Background job state -----
+    CHEZMOI_BG_PID=0
+    CHEZMOI_LAST_CHECK=0
+    CHEZMOI_CHECK_INTERVAL=30
+    CHEZMOI_TMPFILE="/tmp/.chezmoi_bg_result.$$"
+    CHEZMOI_CHECK_ENABLED=1
+
+    enable_chezmoi_check()  { CHEZMOI_CHECK_ENABLED=1; echo "Chezmoi check ON" }
+    disable_chezmoi_check() { CHEZMOI_CHECK_ENABLED=0; echo "Chezmoi check OFF" }
+
+    # -- Background worker (non-blocking) -----
+    _chezmoi_bg_check() {
+        (( CHEZMOI_CHECK_ENABLED )) || return
+
+        # Don't stack — check if previous is still running
+        if (( CHEZMOI_BG_PID > 0 )) && kill -0 "$CHEZMOI_BG_PID" 2>/dev/null; then
+            return
+        fi
+
+        # Cooldown
+        local now
+        now=$(date +%s)
+        if (( now - CHEZMOI_LAST_CHECK < CHEZMOI_CHECK_INTERVAL )); then
+            return
+        fi
+
+        # Launch disowned background subshell
+        {
+            local tmpfile="$CHEZMOI_TMPFILE"
+            local cz_status
+            cz_status=$(chezmoi status 2>/dev/null)
+
+            local unmanaged=""
+            for folder in "${CHEZMOI_WATCHED_FOLDERS[@]}"; do
+                [[ -d "$folder" ]] || continue
+                local files
+                files=$(chezmoi unmanaged "$folder" 2>/dev/null)
+                if [[ -n "$files" ]]; then
+                    if [[ -n "$unmanaged" ]]; then
+                        unmanaged="${unmanaged}"$'\n'"${files}"
+                    else
+                        unmanaged="$files"
+                    fi
+                fi
+            done
+
+            # Atomic write via temp + mv
+            local tmp_write="${tmpfile}.writing"
+            {
+                echo "STATUS_START"
+                echo "$cz_status"
+                echo "STATUS_END"
+                echo "UNMANAGED_START"
+                echo "$unmanaged"
+                echo "UNMANAGED_END"
+            } > "$tmp_write"
+            mv -f "$tmp_write" "$tmpfile"
+        } &!
+
+        CHEZMOI_BG_PID=$!
+    }
+
+    # -- Collect results from background job (instant) -----
+    _chezmoi_collect_result() {
+        [[ -f "$CHEZMOI_TMPFILE" ]] || return
+
+        # Still running? Don't read partial results
+        if (( CHEZMOI_BG_PID > 0 )) && kill -0 "$CHEZMOI_BG_PID" 2>/dev/null; then
+            return
+        fi
+
+        local in_status=0 in_unmanaged=0
+        local status_lines="" unmanaged_lines=""
+
+        while IFS= read -r line; do
+            case "$line" in
+                STATUS_START)    in_status=1; continue ;;
+                STATUS_END)      in_status=0; continue ;;
+                UNMANAGED_START) in_unmanaged=1; continue ;;
+                UNMANAGED_END)   in_unmanaged=0; continue ;;
+            esac
+            if (( in_status )); then
+                [[ -n "$line" ]] && status_lines="${status_lines:+${status_lines}$'\n'}${line}"
+            elif (( in_unmanaged )); then
+                [[ -n "$line" ]] && unmanaged_lines="${unmanaged_lines:+${unmanaged_lines}$'\n'}${line}"
+            fi
+        done < "$CHEZMOI_TMPFILE"
+
+        CHEZMOI_STATUS_CACHE="$status_lines"
+        if [[ -n "$unmanaged_lines" ]]; then
+            CHEZMOI_UNMANAGED_CACHE=("${(@f)unmanaged_lines}")
+            CHEZMOI_UNMANAGED_COUNT=${#CHEZMOI_UNMANAGED_CACHE[@]}
+        else
+            CHEZMOI_UNMANAGED_CACHE=()
+            CHEZMOI_UNMANAGED_COUNT=0
+        fi
+
+        CHEZMOI_LAST_CHECK=$(date +%s)
+        rm -f "$CHEZMOI_TMPFILE"
+        CHEZMOI_BG_PID=0
+    }
+
+    # -- Synchronous helper (used by cmoistatus/cmoireadd) -----
+    _get_chezmoi_unmanaged() {
+        local all_unmanaged=""
+        for folder in "${CHEZMOI_WATCHED_FOLDERS[@]}"; do
+            [[ -d "$folder" ]] || continue
+            local files
+            files=$(chezmoi unmanaged "$folder" 2>/dev/null)
+            if [[ -n "$files" ]]; then
+                if [[ -n "$all_unmanaged" ]]; then
+                    all_unmanaged="${all_unmanaged}"$'\n'"${files}"
+                else
+                    all_unmanaged="$files"
+                fi
+            fi
+        done
+
+        # Update cache
+        if [[ -n "$all_unmanaged" ]]; then
+            CHEZMOI_UNMANAGED_CACHE=("${(@f)all_unmanaged}")
+            CHEZMOI_UNMANAGED_COUNT=${#CHEZMOI_UNMANAGED_CACHE[@]}
+        else
+            CHEZMOI_UNMANAGED_CACHE=()
+            CHEZMOI_UNMANAGED_COUNT=0
+        fi
+        CHEZMOI_LAST_CHECK=$(date +%s)
+
+        echo "$all_unmanaged"
+    }
+
+    cmoistatus() {
+        echo "\033[36m── Chezmoi Status ──\033[0m"
+        local cz_status
+        cz_status=$(chezmoi status 2>/dev/null)
+        CHEZMOI_STATUS_CACHE="$cz_status"
+        if [[ -n "$cz_status" ]]; then
+            echo "$cz_status"
+        else
+            echo "  \033[90m(no changes)\033[0m"
+        fi
+
+        echo ""
+
+        echo "\033[36m── Unmanaged Files in Watched Folders ──\033[0m"
+        local unmanaged
+        unmanaged=$(_get_chezmoi_unmanaged)
+        if [[ -n "$unmanaged" ]]; then
+            while IFS= read -r file; do
+                echo "  \033[31m+ $file\033[0m"
+            done <<< "$unmanaged"
+            echo ""
+            echo "  \033[33m${CHEZMOI_UNMANAGED_COUNT} unmanaged file(s) found.\033[0m"
+            echo "  \033[90mRun \033[32mcmoireadd\033[90m to re-add tracked changes and add these files.\033[0m"
+        else
+            echo "  \033[90m(all watched folders fully tracked)\033[0m"
+        fi
+    }
+
+    cmoireadd() {
+        echo "\033[36m── Re-adding tracked files ──\033[0m"
+        chezmoi re-add
+        echo "  \033[32mDone.\033[0m"
+
+        echo ""
+
+        echo "\033[36m── Adding unmanaged files from watched folders ──\033[0m"
+        local unmanaged
+        unmanaged=$(_get_chezmoi_unmanaged)
+        if [[ -n "$unmanaged" ]]; then
+            local added=0
+            while IFS= read -r file; do
+                local fullpath="$HOME/$file"
+                if [[ -e "$fullpath" ]]; then
+                    echo "  \033[32m+ $file\033[0m"
+                    chezmoi add "$fullpath"
+                    (( added++ ))
+                else
+                    echo "  \033[33m✗ $file (not found, skipping)\033[0m"
+                fi
+            done <<< "$unmanaged"
+            echo ""
+            echo "  \033[32m${added} file(s) added to chezmoi.\033[0m"
+        else
+            echo "  \033[90m(no unmanaged files found)\033[0m"
+        fi
+
+        # Clear cache
+        CHEZMOI_UNMANAGED_CACHE=()
+        CHEZMOI_UNMANAGED_COUNT=0
+        CHEZMOI_STATUS_CACHE=""
+    }
+
+    # -- Prompt segment (called inside precmd's print) -----
+    _chezmoi_prompt_segment() {
+        local seg=""
+        if (( CHEZMOI_CHECK_ENABLED )); then
+            [[ -n "$CHEZMOI_STATUS_CACHE" ]] && seg+=" %F{yellow}🏠±%f"
+            (( CHEZMOI_UNMANAGED_COUNT > 0 )) && seg+=" %F{red}📁+${CHEZMOI_UNMANAGED_COUNT}%f"
+        fi
+        echo -n "$seg"
+    }
+
+    # -- Hook: collect results + kick off next check -----
+    _chezmoi_precmd_hook() {
+        _chezmoi_collect_result
+        _chezmoi_bg_check
+    }
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd _chezmoi_precmd_hook
+
+    # -- Cleanup temp file on shell exit -----
+    zshexit() {
+        rm -f "$CHEZMOI_TMPFILE" "${CHEZMOI_TMPFILE}.writing"
+    }
+fi
+# ── End Chezmoi ──────────────────────────────────────────────────────
+
 
 # Add some nice git status to the prompt ONLY if git is installed
 if command -v git &>/dev/null; then
@@ -380,7 +623,7 @@ if command -v git &>/dev/null; then
         fi
 
         # Initialize the prompt string
-        prompt="${color} ${branch}${RESET}"
+        prompt="${color} ${branch}${RESET}"
 
         # Add the number of modified files with the page icon (󰷉)
         if [ "$modified_files" -gt 0 ]; then
@@ -418,16 +661,6 @@ if command -v git &>/dev/null; then
         # Get the repository name by parsing the git remote URL
         git remote get-url origin 2>/dev/null | sed -E 's/.*[:\/]([^\/]+)\/([^\/]+).*/\2/'
     }
-    
-    # Set ZSH prompt (using PROMPT instead of PS1)
-    NEWLINE=$'\n'
-    precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
-    export PROMPT=$'╰─ ❯ '
-else
-    # Basic prompt without git info
-    NEWLINE=$'\n'
-    precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ' }
-    export PROMPT=$'╰─ ❯ '
 fi
 
 # IF lazygit is installed
@@ -567,9 +800,23 @@ python_venv_prompt() {
     fi
 }
 
+# ── Prompt Extra Segments (chezmoi, etc.) ────────────────────────────
+# Single function that collects all optional prompt segments.
+# Called via $(…) in precmd. If chezmoi isn't installed, this is empty.
+_prompt_extra_segments() {
+    if (( CHEZMOI_INSTALLED )) ; then
+        _chezmoi_prompt_segment
+    fi
+}
+
 # precmd() for multiline to fix zsh prompt redraw issues
 NEWLINE=$'\n'
-precmd() { print -rP  $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}' }
+if command -v git &>/dev/null; then
+    precmd() { print -rP $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET} ${COLOR5}$(git_prompt) $(git_repo_name)${RESET}$(_prompt_extra_segments)' }
+else
+    precmd() { print -rP $'$NEWLINE╭╴${COLOR1}%n${RESET}${COLOR4}@${RESET}${COLOR2}%m${RESET} ${COLOR3}%~${RESET}$(_prompt_extra_segments)' }
+fi
+
 # Change prompt indicator to RED if command was not successful
 error_status_prompt_color() {
     if [[ $? -eq 0 || $? -eq 130 ]]; then
@@ -731,4 +978,3 @@ bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect '^Y' accept-search
-
