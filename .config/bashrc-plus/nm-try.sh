@@ -157,6 +157,7 @@ echo "Applying new configuration..."
 
 # =============================================================================
 # CONFIGURATION SECTION - Uncomment and modify the section you need
+# =============================================================================
 CONNECTION_NAME="TestStaticWiFi"
 if ! nmcli connection add \
   type wifi \
