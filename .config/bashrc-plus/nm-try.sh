@@ -163,12 +163,12 @@ if ! nmcli connection add \
   type wifi \
   ifname wlp3s0 \
   con-name "$CONNECTION_NAME" \
-  ssid "CL3DMA" \
+  ssid "MySSID" \
   wifi-sec.key-mgmt wpa-psk \
-  wifi-sec.psk "estefania99" \
+  wifi-sec.psk "myWifiPassword" \
   ipv4.method manual \
-  ipv4.addresses 192.168.23.51/23 \
-  ipv4.gateway 192.168.22.1 \
+  ipv4.addresses 192.168.91.51/23 \
+  ipv4.gateway 192.168.99.1 \
   ipv4.dns "8.8.8.8 8.8.4.4"; then
     echo "ERROR: Failed to create connection!"
     exit 1
