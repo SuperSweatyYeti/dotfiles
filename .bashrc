@@ -39,6 +39,11 @@ if command -v ob &>/dev/null; then
     alias obsync-now="ob sync"
     # Run continuous sync (watches for changes)
     alias obsync-continuous="ob sync --continuous"
+    function ob-sync-config-custom(){
+        # Setup obsidian sync cli config options
+        ob sync-config --file-types "image,audio,video,pdf,unsupported"
+        ob sync-config --configs "app,appearance,appearance-data,hotkey,core-plugin,core-plugin-data,community-plugin,community-plugin-data"
+    }
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
