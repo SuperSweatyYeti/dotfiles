@@ -775,7 +775,7 @@ fi
 
 # Enable ZSH features
 setopt EXTENDED_HISTORY     # Record timestamp in history
-setopt HIST_VERIFY          # Show command with history expansion before running it
+# setopt HIST_VERIFY          # Show command with history expansion before running it
 setopt SHARE_HISTORY        # Share history between sessions
 setopt APPEND_HISTORY       # Add commands to history immediately
 setopt HIST_IGNORE_SPACE    # Don't store commands starting with space
