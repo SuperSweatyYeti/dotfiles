@@ -299,8 +299,8 @@ function prompt {
     $lastSuccess = $?
 
     try {
-        $user = $env:USERNAME
-        $host_name = $env:COMPUTERNAME
+        $user = $env:USER
+        $host_name = $env:HOSTNAME
         $path = $executionContext.SessionState.Path.CurrentLocation.Path
         $path = $path -replace '\\', '/'
 
