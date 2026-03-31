@@ -48,7 +48,7 @@
 # theme = "catppuccin-mocha"
 # theme = "tokyonight"
 theme = "Gruvbox Material"
-background-opacity = 0.8
+background-opacity = 1.0
 background-blur = true
 
 ## Font
