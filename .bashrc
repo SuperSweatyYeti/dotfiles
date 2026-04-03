@@ -109,15 +109,6 @@ if command -v curl &>/dev/null; then
     }
 fi
 
-# Set default editor
-if command -v nvim &>/dev/null; then
-    alias vim='nvim'
-    EDITOR='nvim'
-    SUDO_EDITOR='nvim'
-elif command -v vim &>/dev/null; then
-    EDITOR='vim'
-    SUDO_EDITOR='vim'
-fi
 
 # # Distro Specific settings
 # IF we are Ubuntu
@@ -456,6 +447,18 @@ if command -v "carapace" &>/dev/null; then
     source <(carapace _carapace)
     # No errors if when tabbing on unknown flags
     export CARAPACE_LENIENT=1
+fi
+
+# Need to put this section after BREW in case neovim 
+# is installed via homebrew
+# Set default editor
+if command -v nvim &>/dev/null; then
+    alias vim='nvim'
+    EDITOR='nvim'
+    SUDO_EDITOR='nvim'
+elif command -v vim &>/dev/null; then
+    EDITOR='vim'
+    SUDO_EDITOR='vim'
 fi
 
 # fzf default keybinds AND plus use ctrl-y to accept
