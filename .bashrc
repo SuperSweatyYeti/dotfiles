@@ -415,6 +415,14 @@ fi
 if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+    # Add HOMEBREW to PATH
+    HOMEBREW_BIN_PATH="/home/linuxbrew/.linuxbrew/bin"
+    if [[ ! "$PATH" =~ "$HOMEBREW_BIN_PATH" ]]; then
+        PATH="$HOMEBREW_BIN_PATH:$PATH"
+    fi
+    export PATH
+
+
     # Aliases for brew installed applications
     # IF lazygit is installed with brew then make an alias for it
     if command -v lazygit &>/dev/null; then
