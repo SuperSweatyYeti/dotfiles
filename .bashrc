@@ -166,7 +166,7 @@ if command -v bat &>/dev/null; then
     export MANROFFOPT='-c'
     export MANPAGER="bash -c 'col -bx | bat -l man -p'"
     # Set bat as default pager
-    export PAGER="bat --paging=always"
+    export PAGER="bat --paging=always --style=plain"
 fi
 
 # If lsd is installed then use that for nicer listings
