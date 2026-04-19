@@ -28,7 +28,28 @@ export PATH
 # alias for rmpc ( Terminal music player ) launch with
 # no album art config
 if command -v rmpc &>/dev/null; then
-  alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+    alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+fi
+
+# alias for volume ( change default audio device volume )
+if command -v wpctl &>/dev/null; then
+    alias vol-up="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+    alias vol-down="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    # Set Volume from 0.0 - 1.0
+    vol-set() {
+        if [ -z "$1" ]; then
+            echo "Usage: wpctl-vol-set <0-100>"
+            return 1
+        fi
+
+        if [ "$1" -lt 0 ] || [ "$1" -gt 100 ]; then
+            echo "Error: value must be between 0 and 100"
+            return 1
+        fi
+
+        vol=$(awk "BEGIN { printf \"%.2f\", $1 / 100 }")
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ "$vol"
+    }
 fi
 
 # aliases for obsidian headless sync
@@ -39,7 +60,7 @@ if command -v ob &>/dev/null; then
     alias obsync-now="ob sync"
     # Run continuous sync (watches for changes)
     alias obsync-continuous="ob sync --continuous"
-    function ob-sync-config-custom(){
+    function ob-sync-config-custom() {
         # Setup obsidian sync cli config options
         ob sync-config --file-types "image,audio,video,pdf,unsupported"
         ob sync-config --configs "app,appearance,appearance-data,hotkey,core-plugin,core-plugin-data,community-plugin,community-plugin-data"
@@ -74,41 +95,40 @@ unset rc
 
 # My wonderful hgrep function which uses awk to grep with headers!
 if test -e ~/.config/bashrc-plus/hgrep.bash; then
-    source  ~/.config/bashrc-plus/hgrep.bash
+    source ~/.config/bashrc-plus/hgrep.bash
 fi
 
 # Helper function related to hgrep
 # Some commands don't output their headers if they are being piped
 # Example: flatpak list
 outty() {
-  if [[ $# -eq 0 ]]; then
-    echo "Usage: outty COMMAND [ARGS]"
-    echo "Runs COMMAND in a pseudo-terminal to preserve headers"
-    return 1
-  fi
-  
-  # Use either script, unbuffer, or stdbuf
-  if command -v script &>/dev/null; then
-    script -qc "$*" /dev/null
-  elif command -v unbuffer &>/dev/null; then
-    unbuffer "$@"
-  elif command -v stdbuf &>/dev/null; then
-    stdbuf -i0 -o0 -e0 "$@"
-  else
-    echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
-    return 1
-  fi
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: outty COMMAND [ARGS]"
+        echo "Runs COMMAND in a pseudo-terminal to preserve headers"
+        return 1
+    fi
+
+    # Use either script, unbuffer, or stdbuf
+    if command -v script &>/dev/null; then
+        script -qc "$*" /dev/null
+    elif command -v unbuffer &>/dev/null; then
+        unbuffer "$@"
+    elif command -v stdbuf &>/dev/null; then
+        stdbuf -i0 -o0 -e0 "$@"
+    else
+        echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
+        return 1
+    fi
 }
 
 # Cheat function to curl for examples of a command using https://cheat.sh
 if command -v curl &>/dev/null; then
-    function cheatsh(){
+    function cheatsh() {
         # First argument will be the command we
         # want to see examples for
         curl -s https://cheat.sh/${1}
     }
 fi
-
 
 # # Distro Specific settings
 # IF we are Ubuntu
@@ -154,9 +174,9 @@ fi
 
 # fzf find hidden alias using find
 if command -v fzf &>/dev/null; then
-  fzf-hidden() {
-    find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf
-  }
+    fzf-hidden() {
+        find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf
+    }
 fi
 
 # Set Syntax highlighting for man pages with bat
@@ -220,7 +240,6 @@ if command -v fzf &>/dev/null; then
     fi
 
 fi
-
 
 # Old Custom prompts
 # PS1 Prompt
@@ -384,31 +403,30 @@ if command -v yazi &>/dev/null; then
     # cd into directory when leaving yazi
     function cdyazi() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-        
+
         # Filter out --cwd-file from the arguments passed to yazi, if present
         local args=()
         for arg in "$@"; do
-        if [[ "$arg" != --cwd-file* ]]; then
-            args+=("$arg")
-        fi
+            if [[ "$arg" != --cwd-file* ]]; then
+                args+=("$arg")
+            fi
         done
-        
+
         # Now call yazi with the modified args and add --cwd-file="$tmp" once
         yazi "${args[@]}" --cwd-file="$tmp"
-        
+
         # Handle cwd change
         if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
+            builtin cd -- "$cwd"
         fi
-        
+
         # Clean up the temporary file
         rm -f -- "$tmp"
     }
-    
+
     alias y='yazi'
     alias cdy='cdyazi'
 fi
-
 
 # linux homebrew
 # Only IF brew is installed
@@ -421,7 +439,6 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
         PATH="$HOMEBREW_BIN_PATH:$PATH"
     fi
     export PATH
-
 
     # Aliases for brew installed applications
     # IF lazygit is installed with brew then make an alias for it
@@ -457,7 +474,7 @@ if command -v "carapace" &>/dev/null; then
     export CARAPACE_LENIENT=1
 fi
 
-# Need to put this section after BREW in case neovim 
+# Need to put this section after BREW in case neovim
 # is installed via homebrew
 # Set default editor
 if command -v nvim &>/dev/null; then

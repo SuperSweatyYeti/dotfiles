@@ -26,6 +26,27 @@ if command -v rmpc &>/dev/null; then
   alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
 fi
 
+# alias for volume ( change default audio device volume )
+if command -v wpctl &>/dev/null; then
+  alias vol-up="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+  alias vol-down="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  # Set Volume from 0.0 - 1.0
+  vol-set() {
+  if [ -z "$1" ]; then
+    echo "Usage: wpctl-vol-set <0-100>"
+    return 1
+  fi
+
+  if [ "$1" -lt 0 ] || [ "$1" -gt 100 ]; then
+    echo "Error: value must be between 0 and 100"
+    return 1
+  fi
+
+  vol=$(awk "BEGIN { printf \"%.2f\", $1 / 100 }")
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ "$vol"
+}
+fi
+
 # aliases for obsidian headless sync
 if command -v ob &>/dev/null; then
     # Sync status
