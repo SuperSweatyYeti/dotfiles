@@ -3,10 +3,8 @@
 #![enable(unwrap_variant_newtypes)]
 (
     draw_borders: false,
-    show_song_table_header: true,
     background_color: "#1e1e2e",
     default_album_art_path: None,
-    header_background_color: "#313244",
     modal_background_color: "#313244",
     modal_backdrop: true,
     text_color: "#cdd6f4",
@@ -16,6 +14,7 @@
             (
                 size: "4",
                 borders: "ALL",
+                background_color: "#1e1e2e",
                 pane: Split(
                     direction: Vertical,
                     panes: [
@@ -38,7 +37,7 @@
                                                     ),
                                                     paused_label: "[Paused]", 
                                                     paused_style: (
-                                                        fg: "#f9e2af",
+                                                        fg: "#ef9f76",
                                                         modifiers: "Bold",
                                                     ),
                                                     stopped_label: "[Stopped]",
@@ -154,7 +153,6 @@
             (
                 size: "100%",
                 borders: "ALL",
-                background_color: "#f38ba8",
                 pane: Pane(TabContent),
             ),
             (
@@ -190,7 +188,7 @@
     ),
     symbols: (
         song: "🎵",
-        dir: "📁",
+        dir: "",
         marker: "\u{e0b0}",
         ellipsis: "…"
     ),
@@ -227,7 +225,13 @@
         active_style: (fg: "#1e1e2e", bg: "#89b4fa", modifiers: "Bold"),
         inactive_style: (),
     ),
-    highlighted_item_style: (fg: "#f38ba8", modifiers: "Bold"),
+    // highlighted_item_style: (fg: "#f38ba8", modifiers: "Bold"),
+    // highlighted_item_style: (fg: "#f38ba8", bg: "#313244", modifiers: "Bold"),
+    // current_item_style: (fg: "#1e1e2e", bg: "#89b4fa", modifiers: "Bold"),
+    // highlighted_item_style: (fg: "#f38ba8", bg: "#45475a", modifiers: "Bold"),
+    // highlighted_item_style: (fg: "#f38ba8", modifiers: "Bold | Underlined"),
+    // current_item_style: (fg: "#1e1e2e", bg: "#89b4fa", modifiers: "Bold"),
+    highlighted_item_style: (fg: "#303040", bg: "#f38ba8", modifiers: "Bold | Italic | Reversed"),
     current_item_style: (fg: "#1e1e2e", bg: "#89b4fa", modifiers: "Bold"),
     borders_style: (fg: "#89b4fa", modifiers: "Bold"),
     highlight_border_style: (fg: "#f38ba8"),
@@ -254,4 +258,3 @@
     ],
     header: (rows: []),
 )
-
