@@ -1,0 +1,79 @@
+# Vim-style wiremix configuration
+
+mouse = true
+tab = "playback"
+
+keybindings = [
+  # -- Navigation (vim-style) --
+  { key = { Char = "j" }, action = "MoveDown" },
+  { key = { Char = "k" }, action = "MoveUp" },
+
+  # -- Volume (vim-style: h/l for left/right) --
+  { key = { Char = "h" }, action = { SetRelativeVolume = -0.01 } },
+  { key = { Char = "l" }, action = { SetRelativeVolume = 0.01 } },
+  # Bigger steps with ALT
+  { key = { Char = "h" }, modifiers = "ALT", action = { SetRelativeVolume = -0.10 } },
+  { key = { Char = "l" }, modifiers = "ALT", action = { SetRelativeVolume = 0.10 } },
+
+  # -- Tabs (gt/gT style via Tab/BackTab, plus number keys) --
+  { key = { Char = "h" }, modifiers = "SHIFT", action = "TabLeft" },
+  { key = { Char = "l" }, modifiers = "SHIFT", action = "TabRight" },
+  # Jump to tabs directly
+  { key = { F = 1 }, action = { SelectTab = 0 } },
+  { key = { F = 2 }, action = { SelectTab = 1 } },
+  { key = { F = 3 }, action = { SelectTab = 2 } },
+  { key = { F = 4 }, action = { SelectTab = 3 } },
+  { key = { F = 5 }, action = { SelectTab = 4 } },
+
+  # -- Actions --
+  { key = { Char = "m" }, action = "ToggleMute" },
+  { key = { Char = "d" }, action = "SetDefault" },
+  { key = "Enter", action = "ActivateDropdown" },
+  { key = { Char = "c" }, action = "ActivateDropdown" },
+  { key = "Esc", action = "CloseDropdown" },
+  { key = { Char = "q" }, action = "Exit" },
+  { key = { Char = "?" }, action = "Help" },
+
+  # -- Absolute volume (number keys) --
+  { key = { Char = "`" }, action = { SetAbsoluteVolume = 0.00 } },
+  { key = { Char = "1" }, action = { SetAbsoluteVolume = 0.10 } },
+  { key = { Char = "2" }, action = { SetAbsoluteVolume = 0.20 } },
+  { key = { Char = "3" }, action = { SetAbsoluteVolume = 0.30 } },
+  { key = { Char = "4" }, action = { SetAbsoluteVolume = 0.40 } },
+  { key = { Char = "5" }, action = { SetAbsoluteVolume = 0.50 } },
+  { key = { Char = "6" }, action = { SetAbsoluteVolume = 0.60 } },
+  { key = { Char = "7" }, action = { SetAbsoluteVolume = 0.70 } },
+  { key = { Char = "8" }, action = { SetAbsoluteVolume = 0.80 } },
+  { key = { Char = "9" }, action = { SetAbsoluteVolume = 0.90 } },
+  { key = { Char = "0" }, action = { SetAbsoluteVolume = 1.00 } },
+]
+
+# Catppuccin Mocha theme (matches your rmpc theme)
+# [themes.default]
+# selector = { fg = "#89b4fa" }
+# tab = { fg = "#cdd6f4" }
+# tab_selected = { fg = "#1e1e2e", bg = "#89b4fa", add_modifier = "BOLD" }
+# tab_marker = { fg = "#89b4fa" }
+# list_more = { fg = "#6c7086" }
+# node_title = { fg = "#cdd6f4" }
+# node_target = { fg = "#a6e3a1" }
+# volume = { fg = "#cdd6f4" }
+# volume_empty = { fg = "#313244" }
+# volume_filled = { fg = "#89b4fa" }
+# meter_inactive = { fg = "#313244" }
+# meter_active = { fg = "#a6e3a1" }
+# meter_overload = { fg = "#f38ba8" }
+# meter_center_inactive = { fg = "#313244" }
+# meter_center_active = { fg = "#a6e3a1" }
+# config_device = { fg = "#cdd6f4" }
+# config_profile = { fg = "#a6e3a1" }
+# dropdown_icon = { fg = "#89b4fa" }
+# dropdown_border = { fg = "#89b4fa" }
+# dropdown_item = { fg = "#cdd6f4" }
+# dropdown_selected = { fg = "#1e1e2e", bg = "#89b4fa", add_modifier = "BOLD" }
+# dropdown_more = { fg = "#6c7086" }
+# default_device = { fg = "#f9e2af" }
+# default_stream = { fg = "#f9e2af" }
+# help_border = { fg = "#89b4fa" }
+# help_item = { fg = "#cdd6f4" }
+# help_more = { fg = "#6c7086" }
