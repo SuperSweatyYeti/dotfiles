@@ -155,7 +155,16 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
 
 # IF we are Fedora
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
-    alias sudoedit='sudo XDG_CONFIG_HOME="$HOME/.config" $EDITOR'
+    # sudoedit() {
+    #     sudo XDG_CONFIG_HOME="$HOME/.config"
+    #     env SUDO_EDITOR=$(which $EDITOR) sudoedit $1
+    # }
+    # This version of sudoedit will resolve symlinks automatically
+    sudoedit() {
+        local target
+        target="$(realpath "$1")" || return 1
+        env SUDO_EDITOR="$(which "$EDITOR")" command sudoedit "$target"
+    }
     # IF fzf is installed then
     if command -v fzf &>/dev/null; then
         if test -e /usr/share/fzf/shell/key-bindings.bash; then
