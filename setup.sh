@@ -38,7 +38,7 @@ sudo mkdir -p /etc/keyd
 sudo ln -sf ~/dotfiles/keyd.conf /etc/keyd/default.conf
 
 # Setup tailscale prefer local routes when overlapping fix
-
+# TODO
 
 # Now stow is safe to run
 cd ~/dotfiles || exit
