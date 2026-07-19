@@ -3,7 +3,7 @@ Description=Periodically prefer local routes over Tailscale when on trusted LAN
 
 [Timer]
 OnBootSec=15
-OnUnitActiveSec=30
+OnUnitActiveSec=15
 
 [Install]
 WantedBy=timers.target

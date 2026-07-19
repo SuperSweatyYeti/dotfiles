@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 
+# NetworkManager dispatcher script
+# $1 = interface, $2 = action
+
+# Only trigger on events that indicate a new/changed connection
+[[ "$2" =~ ^(up|dhcp4-change|connectivity-change)$ ]] || exit 0
+
 systemctl start tailscale-prefer-local-routes.service

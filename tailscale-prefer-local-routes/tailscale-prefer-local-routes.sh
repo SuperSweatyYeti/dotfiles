@@ -2,56 +2,71 @@
 
 set -euo pipefail
 
-# Script to Detect if we are connected to our HOME lan and prefer locally connected route
-# Over the route provided by tailscale
+# Script to detect if we are connected to our HOME LAN and prefer the locally
+# connected route over the route provided by Tailscale.
 
 RULE_PREF=5269
 TRUSTED_LAN_CURL_QUERY="pfSense-CL3DMA"
 
 cleanup() {
-    ip rule del pref "$RULE_PREF" 2>/dev/null || true
+    if ip rule show pref "$RULE_PREF" | grep -q .; then
+        ip rule del pref "$RULE_PREF"
+        log "Removed local route override."
+    fi
 }
 
 log() {
+    echo "$*" >&2
     logger -t tailscale-prefer-local-routes "$*"
 }
 
 # Tailscale must be running
 if [[ "$(tailscale status --json | jq -r '.BackendState')" != "Running" ]]; then
     cleanup
-    log "Tailscale stopped; removed local route override."
+    log "Tailscale not running."
     exit 0
 fi
 
 # No Tailscale routes means nothing to override
 if ! ip route show table 52 | grep -q .; then
     cleanup
-    log "No Tailscale routes found; removed local route override."
+    log "No Tailscale routes found."
     exit 0
 fi
 
-# Look for local connected networks that overlap Tailscale routes
+# Get the interface used by the default route
+default_dev=$(ip -4 route show default | awk '{print $5; exit}')
+
 while read -r subnet _ dev _; do
 
-    # Extract an IP from the local interface
-    gateway=$(ip route show default dev "$dev" | awk '/default/ {print $3}')
+    # Only process the default route interface, skip loopback, docker, tailscale, etc.
+    [[ "$dev" == "$default_dev" ]] || continue
+    [[ "$dev" == tailscale* ]] && continue
+
+    # Extract the default gateway for this interface
+    gateway=$(ip route show default dev "$dev" 2>/dev/null | awk '/default/ {print $3; exit}')
 
     [[ -z "$gateway" ]] && continue
 
-    # Does Tailscale's table route this gateway?
+    # Skip if Tailscale's table already routes this gateway (no conflict)
     if ip route get "$gateway" table 52 >/dev/null 2>&1; then
         continue
     fi
 
-    echo "Verifying trusted gateway via curl..."
-    # Verify this is our trusted LAN
+    # If rule already exists for this subnet, no need to re-verify
+    if ip rule show pref "$RULE_PREF" | grep -q "$subnet"; then
+        log "Rule already exists for $subnet, skipping."
+        exit 0
+    fi
+
+    log "Verifying trusted gateway $gateway via curl..."
     if curl -ks --connect-timeout 2 "https://${gateway}/" |
         grep -q "${TRUSTED_LAN_CURL_QUERY}"; then
 
         ip rule del pref "$RULE_PREF" 2>/dev/null || true
         ip rule add pref "$RULE_PREF" to "$subnet" lookup main
 
-        log "Preferring local route $subnet via $dev"
+        log "Preferring local route $subnet via $dev (gateway $gateway)"
         exit 0
     fi
 
