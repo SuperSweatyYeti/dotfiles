@@ -1,0 +1,8 @@
+[Unit]
+Description=Prefer locally connected routes over Tailscale routes when they overlap ( with checks )
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/tailscale/tailscale-prefer-local-routes.sh

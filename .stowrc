@@ -4,3 +4,5 @@
 --ignore=keyd.conf
 --ignore=fonts.sh
 --ignore=brave-setup.sh
+--ignore=tailscale-prefer-local-routes
+--ignore=tailscale-prefer-local-routes/.*

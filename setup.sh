@@ -37,6 +37,9 @@ ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
 sudo mkdir -p /etc/keyd
 sudo ln -sf ~/dotfiles/keyd.conf /etc/keyd/default.conf
 
+# Setup tailscale prefer local routes when overlapping fix
+
+
 # Now stow is safe to run
 cd ~/dotfiles || exit
 stow . --adopt
