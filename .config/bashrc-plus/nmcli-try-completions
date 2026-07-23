@@ -1,0 +1,58 @@
+# bash completion for nmcli-try / nmcli-try.sh
+#
+# INSTALL
+#   Bash (auto-loaded, no rc edit needed):
+#     nmcli-try.sh --setup-completions
+#   — or manually —
+#     mkdir -p ~/.local/share/bash-completion/completions
+#     cp nmcli-try-completions ~/.local/share/bash-completion/completions/nmcli-try
+#
+#   Zsh (via bashcompinit):
+#     nmcli-try.sh --setup-completions
+#   — or manually —
+#     mkdir -p ~/.zsh/completions
+#     cp nmcli-try-completions ~/.zsh/completions/nmcli-try
+#     # Add to ~/.zshrc (before compinit):
+#     #   fpath=(~/.zsh/completions $fpath)
+#     #   autoload -U +X bashcompinit && bashcompinit
+#     #   autoload -U +X compinit    && compinit -u
+
+_nmcli_try_complete() {
+    local cur prev
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]:-}"
+    COMPREPLY=()
+
+    local all_opts="--connection-name --connection-type --ssid --wifi-password
+        --wifi-security --ipv4-method --ipv4-address --ipv4-gateway --ipv4-dns
+        --ipv6-method --ipv6-address --ipv6-gateway --ipv6-dns
+        --interface --autoconnect --metric --vlan-id --vlan-parent
+        --clear-ipv4-address --clear-ipv4-gateway --clear-ipv4-dns
+        --clear-ipv6-address --clear-ipv6-gateway --clear-ipv6-dns
+        --clear-ssid --clear-wifi-security --clear-interface
+        --clear-metric --clear-autoconnect
+        --timeout-seconds --rollback --show --list --connection-restart
+        --dry-run --verbose --examples --help"
+
+    local suggestions=""
+    case "$prev" in
+        --connection-type) suggestions="wifi ethernet vpn bridge bond vlan dummy" ;;
+        --wifi-security)   suggestions="wpa-psk wpa-eap none" ;;
+        --ipv4-method)     suggestions="auto manual disabled link-local" ;;
+        --ipv6-method)     suggestions="auto manual disabled ignore link-local" ;;
+        --autoconnect)     suggestions="yes no" ;;
+        --timeout-seconds) suggestions="30 60 90 120 180 300" ;;
+        --interface|--vlan-parent)
+            suggestions="$(ip -o link show 2>/dev/null | awk -F': ' '{print $2}' | tr '\n' ' ')" ;;
+        --connection-name|--rollback|--show|--connection-restart)
+            suggestions="$(nmcli -t -f NAME con show 2>/dev/null | tr '\n' ' ')" ;;
+        *) suggestions="$all_opts" ;;
+    esac
+
+    COMPREPLY=( $(compgen -W "$suggestions" -- "$cur") )
+}
+
+complete -F _nmcli_try_complete nmcli-try
+complete -F _nmcli_try_complete nmcli-try.sh
+complete -F _nmcli_try_complete ./nmcli-try.sh
+

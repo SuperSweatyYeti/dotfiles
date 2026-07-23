@@ -13,15 +13,18 @@
 #   nmcli-try.sh --examples
 #
 # SETUP COMPLETIONS (run once):
-#   source nmcli-try.sh --setup-completions
+#   nmcli-try.sh --setup-completions
 
 # Do NOT use set -e — we handle errors explicitly to avoid silent exits
 set -uo pipefail
 
-MIN_BASH_VERSION_MAJOR=4
-MIN_BASH_VERSION_MINOR=0
+# =============================================================================
+# Pre-flight checks
+# =============================================================================
 
 # Require Bash 4.0+
+MIN_BASH_VERSION_MAJOR=4
+MIN_BASH_VERSION_MINOR=0
 CURRENT_BASH_VERSION_MAJOR=${BASH_VERSINFO[0]}
 
 if  [[ ${CURRENT_BASH_VERSION_MAJOR} -lt ${MIN_BASH_VERSION_MAJOR} ]]; then
@@ -29,65 +32,65 @@ if  [[ ${CURRENT_BASH_VERSION_MAJOR} -lt ${MIN_BASH_VERSION_MAJOR} ]]; then
     exit 1
 fi
 
-# =============================================================================
-# COMPLETION SETUP
-# =============================================================================
-
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    _nmcli_try_complete() {
-        local cur prev
-        cur="${COMP_WORDS[COMP_CWORD]}"
-        prev="${COMP_WORDS[COMP_CWORD-1]:-}"
-        COMPREPLY=()
-
-        local all_opts="--connection-name --connection-type --ssid --wifi-password
-            --wifi-security --ipv4-method --ipv4-address --ipv4-gateway --ipv4-dns
-            --ipv6-method --ipv6-address --ipv6-gateway --ipv6-dns
-            --interface --autoconnect --metric --vlan-id --vlan-parent
-            --clear-ipv4-address --clear-ipv4-gateway --clear-ipv4-dns
-            --clear-ipv6-address --clear-ipv6-gateway --clear-ipv6-dns
-            --clear-ssid --clear-wifi-security --clear-interface
-            --clear-metric --clear-autoconnect
-            --timeout-seconds --rollback --show --list --connection-restart
-            --dry-run --verbose --examples --help"
-
-        local suggestions=""
-        case "$prev" in
-            --connection-type) suggestions="wifi ethernet vpn bridge bond vlan dummy" ;;
-            --wifi-security)   suggestions="wpa-psk wpa-eap none" ;;
-            --ipv4-method)     suggestions="auto manual disabled link-local" ;;
-            --ipv6-method)     suggestions="auto manual disabled ignore link-local" ;;
-            --autoconnect)     suggestions="yes no" ;;
-            --timeout-seconds) suggestions="30 60 90 120 180 300" ;;
-            --interface|--vlan-parent)
-                suggestions="$(ip -o link show 2>/dev/null | awk -F': ' '{print $2}' | tr '\n' ' ')" ;;
-            --connection-name|--rollback|--show|--connection-restart)
-                suggestions="$(nmcli -t -f NAME con show 2>/dev/null | tr '\n' ' ')" ;;
-            *) suggestions="$all_opts" ;;
-        esac
-
-        COMPREPLY=( $(compgen -W "$suggestions" -- "$cur") )
-    }
-
-    complete -F _nmcli_try_complete nmcli-try.sh
-    complete -F _nmcli_try_complete nmcli-try
-    complete -F _nmcli_try_complete ./nmcli-try.sh
-    [[ -f /usr/local/bin/nmcli-try ]] && complete -F _nmcli_try_complete /usr/local/bin/nmcli-try
-    return 0
-fi
-
+# Handle --setup-completions before NM checks — nmcli need not be running to install a file
 if [[ "${1:-}" == "--setup-completions" ]]; then
-    SCRIPT_PATH="$(realpath "$0")"
-    MARKER="nmcli_try_completions"
-    SNIPPET="# $MARKER"$'\n'"source \"$SCRIPT_PATH\""
-    if ! grep -qF "$MARKER" ~/.bashrc 2>/dev/null; then
-        printf '\n%s\n' "$SNIPPET" >> ~/.bashrc
-        echo "Completions registered. Run: source ~/.bashrc"
-    else
-        echo "Completions already registered in ~/.bashrc"
+    _sc_dir="$(dirname "$(realpath "$0")")"
+    _sc_src="${_sc_dir}/nmcli-try-completions"
+    if [[ ! -f "$_sc_src" ]]; then
+        echo "Error: 'nmcli-try-completions' not found in $_sc_dir" >&2
+        echo "       Keep nmcli-try-completions alongside nmcli-try.sh" >&2
+        exit 1
     fi
+    _sc_shell="${SHELL##*/}"
+    if [[ "$_sc_shell" == "zsh" ]]; then
+        _sc_comp_dir="$HOME/.zsh/completions"
+        _sc_rc="$HOME/.zshrc"
+        _sc_marker="nmcli_try_fpath"
+        mkdir -p "$_sc_comp_dir"
+        cp "$_sc_src" "$_sc_comp_dir/nmcli-try"
+        if ! grep -qF "$_sc_marker" "$_sc_rc" 2>/dev/null; then
+            printf '\n# %s\nfpath=(%s $fpath)\nautoload -U +X bashcompinit && bashcompinit\nautoload -U +X compinit    && compinit -u\n' \
+                "$_sc_marker" "$_sc_comp_dir" >> "$_sc_rc"
+            echo "Installed: $_sc_comp_dir/nmcli-try"
+            echo "Updated:   $_sc_rc (fpath + bashcompinit)"
+            echo "Run:       source $_sc_rc"
+        else
+            echo "Installed: $_sc_comp_dir/nmcli-try (rc already configured)"
+        fi
+    else
+        _sc_comp_dir="$HOME/.local/share/bash-completion/completions"
+        mkdir -p "$_sc_comp_dir"
+        cp "$_sc_src" "$_sc_comp_dir/nmcli-try"
+        echo "Installed: $_sc_comp_dir/nmcli-try"
+        echo "Active:    on next Tab — bash-completion auto-loads it (no rc edit needed)"
+    fi
+    unset _sc_dir _sc_src _sc_shell _sc_comp_dir _sc_rc _sc_marker
     exit 0
 fi
+
+# Require NetworkManager (nmcli) to be installed and enabled
+if ! command -v nmcli &>/dev/null; then
+    echo "Error: 'nmcli' not found. Install NetworkManager to use this script." >&2
+    exit 1
+fi
+
+if ! nmcli general status &>/dev/null; then
+    echo "Error: NetworkManager is not running. Start it with: systemctl start NetworkManager" >&2
+    exit 1
+fi
+
+_nm_connectivity=$(nmcli -t -f CONNECTIVITY general status 2>/dev/null | head -1)
+if [[ "$_nm_connectivity" == "none" || "$_nm_connectivity" == "unknown" ]]; then
+    # Check if NM is actually managing any devices
+    _nm_managed=$(nmcli -t -f DEVICE,STATE device status 2>/dev/null \
+        | awk -F: '$2 != "unmanaged" && $2 != "" {count++} END {print count+0}')
+    if [[ "$_nm_managed" -eq 0 ]]; then
+        echo "Error: NetworkManager is running but not managing any network interfaces." >&2
+        echo "       Check /etc/NetworkManager/NetworkManager.conf or run: nmcli device status" >&2
+        exit 1
+    fi
+fi
+unset _nm_connectivity _nm_managed
 
 # =============================================================================
 # DEFAULTS
@@ -1310,3 +1313,4 @@ trap do_rollback_on_exit EXIT SIGINT SIGTERM SIGHUP
 trace "main: trap armed"
 
 apply_and_try
+

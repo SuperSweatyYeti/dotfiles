@@ -19,6 +19,13 @@ if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
 fi
 export PATH
 
+# Add custom bash scripts to PATH
+BASH_SCRIPTS_PATH="$HOME/.config/bashrc-plus"
+if [[ ! "$PATH" =~ "$BASH_SCRIPTS_PATH" ]]; then
+    PATH="$BASH_SCRIPTS_PATH:$PATH"
+fi
+export PATH
+
 
 # alias for rmpc ( Terminal music player ) launch with
 # no album art config
@@ -82,6 +89,31 @@ unset rc
 # Enable ZSH completion system
 autoload -Uz compinit
 compinit
+
+# Enable bash completion compatiblity system
+autoload -Uz bashcompinit
+bashcompinit
+
+
+# Load user bash completion files
+local bash_completion_dir="$HOME/.local/share/bash-completion/completions"
+
+
+# Create directory if it does not exist
+mkdir -p "$bash_completion_dir"
+
+if [[ -d "$bash_completion_dir" ]]; then
+  for file in "$bash_completion_dir"/*; do
+    [[ -f "$file" ]] && source "$file"
+  done
+fi
+
+# This script needs to be run as sudo
+local nmcli_try_file="$HOME/.config/bashrc-plus/nmcli-try"
+if [[ -f "$nmcli_try_file" ]]; then
+  alias nmcli-try="sudo ${nmcli_try_file}"
+fi
+
 
 
 # My amazing function to grep with HEADERS!!
