@@ -33,6 +33,15 @@ ln -sfn ~/dotfiles/.config/yazi ~/.config/yazi
 ln -sfn ~/dotfiles/.config/rio ~/.config/rio
 ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
 
+# User Bash scripts
+# Create directory if it does not exist
+bash_completion_dir="$HOME/.local/share/bash-completion/completions"
+mkdir -p "$bash_completion_dir"
+
+nmcli_try_completions_file="$HOME/.config/bashrc-plus/nmcli-try-completions"
+
+cp "$nmcli_try_completions_file" "$bash_completion_dir"
+
 # Setup keyd config
 sudo mkdir -p /etc/keyd
 sudo ln -sf ~/dotfiles/keyd.conf /etc/keyd/default.conf
