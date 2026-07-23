@@ -48,6 +48,16 @@ sudo ln -sf ~/dotfiles/keyd.conf /etc/keyd/default.conf
 
 # Setup tailscale prefer local routes when overlapping fix
 # TODO
+echo "Setting up tailscale prefer local routes systemd service.."
+sudo mkdir -p /etc/tailscale
+sudo cp ~/dotfiles/tailscale-prefer-local-routes/90-tailscale-prefer-local-routes /etc/NetworkManager/dispatcher.d/90-tailscale-prefer-local-routes 
+sudo cp ~/dotfiles/tailscale-prefer-local-routes/tailscale-prefer-local-routes.sh /etc/tailscale/tailscale-prefer-local-routes.sh
+sudo cp ~/dotfiles/tailscale-prefer-local-routes/tailscale-prefer-local-routes.service /etc/systemd/system/tailscale-prefer-local-routes.service
+sudo cp ~/dotfiles/tailscale-prefer-local-routes/tailscale-prefer-local-routes.timer /etc/systemd/system/tailscale-prefer-local-routes.timer
+sudo cp ~/dotfiles/tailscale-prefer-local-routes/tailscale-prefer-local-routes.timer /etc/systemd/system/tailscale-prefer-local-routes.timer
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now tailscale-prefer-local-routes.service
 
 # Now stow is safe to run
 cd ~/dotfiles || exit
