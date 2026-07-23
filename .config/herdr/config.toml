@@ -23,13 +23,15 @@ focus_pane_left = ["prefix+h", "alt+shift+h"]
 focus_pane_right = ["prefix+l", "alt+shift+l"]
 focus_pane_down = ["prefix+j", "alt+shift+j"]
 focus_pane_up = ["prefix+k", "alt+shift+k"]
-indexed.tabs = "alt"
 
 # Sidebar
 toggle_sidebar = ["prefix+b", "alt+shift+b"]
 
 # Tabs
 new_tab = ["prefix+c", "alt+n"]
+next_tab = ["prefix+n"]
+previous_tab = ["prefix+p"]
+switch_tab = ["prefix+1..9", "alt+shift+1..9"] # Switch to tab 1..9
 
 [experimental]
 kitty_graphics = true
