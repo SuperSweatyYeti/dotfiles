@@ -1,0 +1,35 @@
+onboarding = false
+[ui.sound]
+enabled = false
+
+[ui]
+show_agent_labels_on_pane_borders = true
+sidebar_start_collapsed = true
+sidebar_collapsed_mode = "compact"
+# options "hidden" "compact"
+mouse_capture = true
+pane_borders = true
+pane_gaps = false
+
+[theme]
+name = "catppuccin"
+auto_switch = false
+
+[keys]
+reload_config = ["prefix+shift+r"]
+
+# Navigation
+focus_pane_left = ["prefix+h", "alt+shift+h"]
+focus_pane_right = ["prefix+l", "alt+shift+l"]
+focus_pane_down = ["prefix+j", "alt+shift+j"]
+focus_pane_up = ["prefix+k", "alt+shift+k"]
+indexed.tabs = "alt"
+
+# Sidebar
+toggle_sidebar = ["prefix+b", "alt+shift+b"]
+
+# Tabs
+new_tab = ["prefix+c", "alt+n"]
+
+[experimental]
+kitty_graphics = true
