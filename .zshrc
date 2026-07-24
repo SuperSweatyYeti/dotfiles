@@ -787,6 +787,10 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
     if command -v lazydocker &>/dev/null; then
         alias ldoc='lazydocker'
     fi
+    # IF superfile is installed
+    if command -v spf &>/dev/null; then
+        alias superfile='spf'
+    fi
     # Yazi config
     # ONLY if yazi is installed through brew
     if command -v yazi &>/dev/null; then
