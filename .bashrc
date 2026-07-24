@@ -34,12 +34,8 @@ fi
 export PATH
 
 
-# Create directory if it does not exist
-mkdir -p "$bash_completion_dir"
-
 # Load user bash completion files
 bash_completion_dir="$HOME/.local/share/bash-completion/completions"
-
 
 # Create directory if it does not exist
 mkdir -p "$bash_completion_dir"
