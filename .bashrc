@@ -532,11 +532,17 @@ if command -v herdr &>/dev/null; then
           if [ -n "$HERDR_SESSION" ]; then
             echo "Already inside Herdr session: $HERDR_SESSION"
           else
-            command herdr session attach "{$DEFAULT_HERDR_DESSION_CUSTOM_NAME}"
+            command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
           fi
         else
           command herdr "$@"
         fi
+    }
+    herdr-kill() {
+        command herdr session delete "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
+    }
+    herdr-stop() {
+        herdr server stop
     }
 fi
 
