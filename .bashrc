@@ -523,6 +523,23 @@ elif command -v vim &>/dev/null; then
     SUDO_EDITOR='vim'
 fi
 
+# IF herdr is installed
+# Change default session name when using herdr
+if command -v herdr &>/dev/null; then
+    DEFAULT_HERDR_SESSION_CUSTOM_NAME="My"
+    herdr() {
+        if [ $# -eq 0 ]; then
+          if [ -n "$HERDR_SESSION" ]; then
+            echo "Already inside Herdr session: $HERDR_SESSION"
+          else
+            command herdr session attach "{$DEFAULT_HERDR_DESSION_CUSTOM_NAME}"
+          fi
+        else
+          command herdr "$@"
+        fi
+    }
+fi
+
 # fzf default keybinds AND plus use ctrl-y to accept
 if [[ ! "$FZF_DEFAULT_OPTS" =~ "--bind=ctrl-y:accept" ]]; then
     FZF_DEFAULT_OPTS="--bind=ctrl-y:accept ${FZF_DEFAULT_OPTS}"
