@@ -23,7 +23,7 @@ fi
 
 # Generally should never change. This is hardcoded in my bashrc and zshrc
 SESSION_NAME="My"
-# 1st Workspace on the left panel
+# Active (focused) workspace
 WORKSPACE_NAME="Custom"
 
 
@@ -138,10 +138,10 @@ get_workspace() {
     WORKSPACE_JSON=$(herdr workspace list)
 
     WORKSPACE_ID=$(echo "$WORKSPACE_JSON" | jq -r \
-        '.result.workspaces[0].workspace_id')
+        '.result.workspaces[] | select(.focused == true) | .workspace_id')
 
     if [[ -z "$WORKSPACE_ID" || "$WORKSPACE_ID" == "null" ]]; then
-        echo "Failed to find existing workspace"
+        echo "Failed to find active workspace"
         echo "$WORKSPACE_JSON"
         exit 1
     fi
