@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# nmcli-try.sh — configure NetworkManager connections with automatic rollback
+# nmcli-try — configure NetworkManager connections with automatic rollback
 #
 # Replicates "netplan try" functionality: applies a configuration, then waits
 # for confirmation before committing. Times out and rolls back automatically.
 #
 # USAGE:
-#   nmcli-try.sh [CONNECTION OPTIONS] [--timeout-seconds N] [--dry-run]
-#   nmcli-try.sh --list
-#   nmcli-try.sh --show NAME
-#   nmcli-try.sh --rollback NAME
-#   nmcli-try.sh --connection-restart NAME
-#   nmcli-try.sh --examples
+#   nmcli-try [CONNECTION OPTIONS] [--timeout-seconds N] [--dry-run]
+#   nmcli-try --list
+#   nmcli-try --show NAME
+#   nmcli-try --rollback NAME
+#   nmcli-try --connection-restart NAME
+#   nmcli-try --examples
 #
 # SETUP COMPLETIONS (run once):
-#   nmcli-try.sh --setup-completions
+#   nmcli-try --setup-completions
 
 # Do NOT use set -e — we handle errors explicitly to avoid silent exits
 set -uo pipefail
@@ -38,7 +38,7 @@ if [[ "${1:-}" == "--setup-completions" ]]; then
     _sc_src="${_sc_dir}/nmcli-try-completions"
     if [[ ! -f "$_sc_src" ]]; then
         echo "Error: 'nmcli-try-completions' not found in $_sc_dir" >&2
-        echo "       Keep nmcli-try-completions alongside nmcli-try.sh" >&2
+        echo "       Keep nmcli-try-completions alongside nmcli-try" >&2
         exit 1
     fi
     _sc_shell="${SHELL##*/}"
@@ -334,37 +334,37 @@ save_persistent_backup() {
 
 show_examples() {
     cat <<'EOF'
-nmcli-try.sh — example usage
+nmcli-try — example usage
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 INSPECT ─────────────────────────────────────────────────────────────────────
 
   # List all connections
-  nmcli-try.sh --list
+  nmcli-try --list
 
   # Show full details of a specific connection
-  nmcli-try.sh --show "CL3DMA"
+  nmcli-try --show "CL3DMA"
 
   # Preview what a change would do without applying it
-  nmcli-try.sh --connection-name "CL3DMA" \
+  nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 192.168.1.50/24 \
                --dry-run
 
   # Debug any command by adding --verbose
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 192.168.1.50/24 \
                --verbose --dry-run
 
 CREATE — WIFI ───────────────────────────────────────────────────────────────
 
   # New WPA2 WiFi connection (DHCP, auto IP)
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --connection-type wifi \
                --ssid "MyNetwork" \
                --wifi-password "mysecretpassword"
 
   # New WPA2 WiFi connection with a static IP
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --connection-type wifi \
                --ssid "MyNetwork" \
                --wifi-password "mysecretpassword" \
@@ -373,28 +373,28 @@ CREATE — WIFI ─────────────────────�
                --ipv4-dns "8.8.8.8,8.8.4.4"
 
   # New WPA2 WiFi bound to a specific wireless interface
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --connection-type wifi \
                --interface wlan0 \
                --ssid "MyNetwork" \
                --wifi-password "mysecretpassword"
 
   # New open (no password) WiFi connection
-  sudo nmcli-try.sh --connection-name "CafeWiFi" \
+  sudo nmcli-try --connection-name "CafeWiFi" \
                --connection-type wifi \
                --ssid "FreeWiFi" \
                --wifi-security none \
                --ipv4-method auto
 
   # New WPA2-Enterprise (802.1X) WiFi connection
-  sudo nmcli-try.sh --connection-name "Corporate" \
+  sudo nmcli-try --connection-name "Corporate" \
                --connection-type wifi \
                --ssid "CorpNet" \
                --wifi-security wpa-eap \
                --ipv4-method auto
 
   # New hidden network WiFi connection with static IP
-  sudo nmcli-try.sh --connection-name "HiddenNet" \
+  sudo nmcli-try --connection-name "HiddenNet" \
                --connection-type wifi \
                --ssid "HiddenSSID" \
                --wifi-password "secretpassword" \
@@ -403,7 +403,7 @@ CREATE — WIFI ─────────────────────�
                --ipv4-dns "1.1.1.1,1.0.0.1"
 
   # New WiFi connection with IPv6 disabled
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --connection-type wifi \
                --ssid "MyNetwork" \
                --wifi-password "mysecretpassword" \
@@ -413,13 +413,13 @@ CREATE — WIFI ─────────────────────�
 CREATE — ETHERNET ───────────────────────────────────────────────────────────
 
   # New DHCP Ethernet connection
-  sudo nmcli-try.sh --connection-name "Wired" \
+  sudo nmcli-try --connection-name "Wired" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-method auto
 
   # New static Ethernet connection
-  sudo nmcli-try.sh --connection-name "Office" \
+  sudo nmcli-try --connection-name "Office" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-address 10.0.0.50/24 \
@@ -427,7 +427,7 @@ CREATE — ETHERNET ────────────────────
                --ipv4-dns "10.0.0.1,8.8.8.8"
 
   # New static Ethernet with IPv6 disabled
-  sudo nmcli-try.sh --connection-name "Office" \
+  sudo nmcli-try --connection-name "Office" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-address 192.168.1.50/24 \
@@ -436,7 +436,7 @@ CREATE — ETHERNET ────────────────────
                --ipv6-method disabled
 
   # New static Ethernet with multiple DNS servers and autoconnect off
-  sudo nmcli-try.sh --connection-name "Lab" \
+  sudo nmcli-try --connection-name "Lab" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-address 172.16.0.10/16 \
@@ -445,7 +445,7 @@ CREATE — ETHERNET ────────────────────
                --autoconnect no
 
   # New DHCP Ethernet that does not autoconnect
-  sudo nmcli-try.sh --connection-name "Temp" \
+  sudo nmcli-try --connection-name "Temp" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-method auto \
@@ -454,7 +454,7 @@ CREATE — ETHERNET ────────────────────
 CREATE — IPv6 ───────────────────────────────────────────────────────────────
 
   # New Ethernet with static IPv6 only (IPv4 disabled)
-  sudo nmcli-try.sh --connection-name "IPv6Office" \
+  sudo nmcli-try --connection-name "IPv6Office" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-method disabled \
@@ -464,7 +464,7 @@ CREATE — IPv6 ─────────────────────�
                --ipv6-dns "2001:4860:4860::8888,2001:4860:4860::8844"
 
   # New dual-stack connection (static IPv4 + SLAAC IPv6)
-  sudo nmcli-try.sh --connection-name "DualStack" \
+  sudo nmcli-try --connection-name "DualStack" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-address 192.168.1.50/24 \
@@ -473,7 +473,7 @@ CREATE — IPv6 ─────────────────────�
                --ipv6-method auto
 
   # New dual-stack connection (static IPv4 + static IPv6)
-  sudo nmcli-try.sh --connection-name "DualStackStatic" \
+  sudo nmcli-try --connection-name "DualStackStatic" \
                --connection-type ethernet \
                --interface eth0 \
                --ipv4-address 192.168.1.50/24 \
@@ -485,14 +485,14 @@ CREATE — IPv6 ─────────────────────�
 CREATE — VLAN ───────────────────────────────────────────────────────────────
 
   # New VLAN connection using DHCP
-  sudo nmcli-try.sh --connection-name "VLAN100" \
+  sudo nmcli-try --connection-name "VLAN100" \
                --connection-type vlan \
                --vlan-id 100 \
                --vlan-parent eth0 \
                --ipv4-method auto
 
   # New VLAN connection with a static IP
-  sudo nmcli-try.sh --connection-name "VLAN200" \
+  sudo nmcli-try --connection-name "VLAN200" \
                --connection-type vlan \
                --vlan-id 200 \
                --vlan-parent eth0 \
@@ -503,76 +503,76 @@ CREATE — VLAN ─────────────────────�
 EDIT — IPv4 ─────────────────────────────────────────────────────────────────
 
   # Change only the IP address (--ipv4-method manual is inferred)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 192.168.1.50/24
 
   # Assign multiple static IPv4 addresses (comma-separated)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address "192.168.1.50/24,10.0.0.5/24"
 
   # Change IP, gateway and DNS in one shot
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 192.168.1.50/24 \
                --ipv4-gateway 192.168.1.1 \
                --ipv4-dns "8.8.8.8,1.1.1.1"
 
   # Change only the DNS servers
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-dns "1.1.1.1,1.0.0.1"
 
   # Change only the default gateway
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-gateway 192.168.1.254
 
   # Switch from static IP to DHCP (automatically clears address, gateway, dns)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-method auto
 
   # Switch to DHCP but keep a specific DNS server pinned
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-method auto \
                --ipv4-dns "1.1.1.1"
 
   # Set a route metric (lower = preferred when multiple connections are active)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --metric 100
 
 EDIT — IPv6 ─────────────────────────────────────────────────────────────────
 
   # Add a static IPv6 address to an existing connection
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv6-address "2001:db8::50/64" \
                --ipv6-gateway "2001:db8::1"
 
   # Switch IPv6 to SLAAC (auto-configure, clears static address/gateway/dns)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv6-method auto
 
   # Disable IPv6 entirely on an existing connection
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv6-method disabled
 
   # Change IPv6 DNS servers
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv6-dns "2001:4860:4860::8888,2001:4860:4860::8844"
 
 EDIT — WIFI ─────────────────────────────────────────────────────────────────
 
   # Change the WiFi password on an existing connection
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --wifi-password "newpassword"
 
   # Change the SSID and password together
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --ssid "NewNetworkName" \
                --wifi-password "newpassword"
 
   # Remove WiFi security (switch to open network)
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --wifi-security none
 
   # Update WiFi password and switch to a static IP at the same time
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --wifi-password "newpassword" \
                --ipv4-address 192.168.0.50/24 \
                --ipv4-gateway 192.168.0.1
@@ -580,106 +580,106 @@ EDIT — WIFI ──────────────────────
 EDIT — GENERAL ──────────────────────────────────────────────────────────────
 
   # Bind an existing connection to a specific interface
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --interface eth0
 
   # Enable autoconnect on a connection
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --autoconnect yes
 
   # Disable autoconnect on a connection
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --autoconnect no
 
   # Change interface binding and disable autoconnect together
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --interface eth1 \
                --autoconnect no
 
 CLEAR — REMOVE INDIVIDUAL PROPERTIES ───────────────────────────────────────
 
   # Remove a static IPv4 address (without changing the method)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv4-address
 
   # Remove the IPv4 gateway
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv4-gateway
 
   # Remove all IPv4 DNS servers
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv4-dns
 
   # Remove a static IPv6 address
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv6-address
 
   # Remove the IPv6 gateway
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv6-gateway
 
   # Remove all IPv6 DNS servers
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv6-dns
 
   # Remove the interface binding (let NM choose)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-interface
 
   # Remove the route metric (revert to default)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-metric
 
   # Remove the autoconnect override (revert to NM default)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-autoconnect
 
   # Remove WiFi security entirely
-  sudo nmcli-try.sh --connection-name "Home" \
+  sudo nmcli-try --connection-name "Home" \
                --clear-wifi-security
 
   # Clear multiple properties at once
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --clear-ipv4-address \
                --clear-ipv4-gateway \
                --clear-ipv4-dns
 
   # Switch to DHCP and clear metric at the same time
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-method auto \
                --clear-metric
 
 TIMEOUT ─────────────────────────────────────────────────────────────────────
 
   # Use a custom timeout (default is 60 seconds)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 192.168.1.50/24 \
                --timeout-seconds 120
 
   # Give yourself extra time over SSH to verify connectivity before confirming
   # (if you lose the connection, it will roll back automatically after 300s)
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-address 10.0.0.5/24 \
                --ipv4-gateway 10.0.0.1 \
                --timeout-seconds 300
 
   # Minimal timeout — apply and confirm quickly
-  sudo nmcli-try.sh --connection-name "CL3DMA" \
+  sudo nmcli-try --connection-name "CL3DMA" \
                --ipv4-dns "1.1.1.1" \
                --timeout-seconds 10
 
 RESTART ─────────────────────────────────────────────────────────────────────
 
   # Bring a connection down and back up (refreshes DHCP lease, re-auths, etc.)
-  sudo nmcli-try.sh --connection-restart "CL3DMA"
+  sudo nmcli-try --connection-restart "CL3DMA"
 
   # Restart a WiFi connection to reconnect to the access point
-  sudo nmcli-try.sh --connection-restart "Home"
+  sudo nmcli-try --connection-restart "Home"
 
 ROLLBACK ────────────────────────────────────────────────────────────────────
 
   # Restore a connection to its last saved state (from persistent backup)
-  sudo nmcli-try.sh --rollback "CL3DMA"
+  sudo nmcli-try --rollback "CL3DMA"
 
   # Tip: every successful apply saves a timestamped backup to:
   #   ~/.nmcli-try/backups/
@@ -696,15 +696,15 @@ EOF
 
 usage() {
     cat <<EOF
-nmcli-try.sh — configure NetworkManager connections with automatic rollback
+nmcli-try — configure NetworkManager connections with automatic rollback
 
 USAGE:
-  nmcli-try.sh [CONNECTION OPTIONS] [--timeout-seconds N] [--dry-run] [-v]
-  nmcli-try.sh --list
-  nmcli-try.sh --show NAME
-  nmcli-try.sh --rollback NAME
-  nmcli-try.sh --connection-restart NAME
-  nmcli-try.sh --examples
+  nmcli-try [CONNECTION OPTIONS] [--timeout-seconds N] [--dry-run] [-v]
+  nmcli-try --list
+  nmcli-try --show NAME
+  nmcli-try --rollback NAME
+  nmcli-try --connection-restart NAME
+  nmcli-try --examples
 
 CONNECTION IDENTITY:
   --connection-name NAME      Name of the connection (required for edits)
@@ -772,7 +772,7 @@ NOTE:
   Most operations require root. Run with sudo or as root.
 
 SETUP COMPLETIONS (once):
-  source nmcli-try.sh --setup-completions
+  source nmcli-try --setup-completions
 EOF
 }
 
@@ -1236,8 +1236,8 @@ apply_and_try() {
                 echo ""
                 log "Done! '$name' is now active."
                 log "View:   nmcli connection show '$name'"
-                log "Modify: nmcli-try.sh --connection-name '$name' [options]"
-                log "Undo:   nmcli-try.sh --rollback '$name'"
+                log "Modify: nmcli-try --connection-name '$name' [options]"
+                log "Undo:   nmcli-try --rollback '$name'"
                 exit 0
                 ;;
             *)
