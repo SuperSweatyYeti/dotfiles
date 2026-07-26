@@ -24,6 +24,9 @@ reload_config = ["prefix+shift+r"]
 # focus_pane_down = ["prefix+j", "ctrl+j"]
 # focus_pane_up = ["prefix+k", "ctrl+k"]
 
+# Activate resize mode
+resize_mode = ["prefix+r", "alt+shift+h","alt+shift+j","alt+shift+k","alt+shift+l"]
+
 # Sidebar
 toggle_sidebar = ["prefix+b", "alt+shift+b"]
 
