@@ -525,25 +525,67 @@ fi
 
 # IF herdr is installed
 # Change default session name when using herdr
+# IF herdr is installed
 if command -v herdr &>/dev/null; then
+
     DEFAULT_HERDR_SESSION_CUSTOM_NAME="My"
+
     herdr() {
-        if [ $# -eq 0 ]; then
-          if [ -n "$HERDR_SESSION" ]; then
-            echo "Already inside Herdr session: $HERDR_SESSION"
-          else
+        # No arguments:
+        #   Attach to default session unless already inside one
+        if [[ $# -eq 0 ]]; then
+            if [[ -n "${HERDR_SESSION:-}" ]]; then
+                echo "Already inside Herdr session: ${HERDR_SESSION}"
+                return 0
+            fi
+
             command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
-          fi
-        else
-          command herdr "$@"
+            return $?
         fi
+
+
+        # Session commands should always pass through
+        case "$1" in
+            session|server|completion|update|channel|config)
+                command herdr "$@"
+                return $?
+                ;;
+        esac
+
+
+        # If already inside a session, use normal CLI behavior
+        if [[ -n "${HERDR_SESSION:-}" ]]; then
+            command herdr "$@"
+            return $?
+        fi
+
+
+        # If outside a session:
+        # workspace/tab/pane/etc need a session context
+        case "$1" in
+            workspace|tab|pane|agent|notification|worktree|api)
+                command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}" "$@"
+                return $?
+                ;;
+            *)
+                command herdr "$@"
+                return $?
+                ;;
+        esac
     }
+
+
     herdr-kill() {
+        command herdr session stop "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
         command herdr session delete "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
     }
+
+
     herdr-stop() {
-        herdr server stop
+        command herdr server stop
+        command herdr session stop "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
     }
+
 fi
 
 # fzf default keybinds AND plus use ctrl-y to accept
