@@ -868,7 +868,7 @@ if command -v herdr &>/dev/null; then
 
         # Session commands should always pass through
         case "$1" in
-            session|server|completion|update|channel|config)
+            session|server|completion|update|channel|config|plugin)
                 command herdr "$@"
                 return $?
                 ;;

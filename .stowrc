@@ -7,3 +7,5 @@
 --ignore=brave-setup.sh
 --ignore=tailscale-prefer-local-routes
 --ignore=tailscale-prefer-local-routes/.*
+--ignore=.config/systemd/user/*.target.wants
+--ignore=.config/systemd/user/*.target.wants/.*

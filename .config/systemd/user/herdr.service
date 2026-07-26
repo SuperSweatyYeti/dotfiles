@@ -4,6 +4,7 @@ After=default.target
 
 [Service]
 ExecStart=/home/linuxbrew/.linuxbrew/bin/herdr server
+ExecStop=/home/linuxbrew/.linuxbrew/bin/herdr server stop
 Restart=on-failure
 RestartSec=3
 
