@@ -25,6 +25,8 @@ fi
 SESSION_NAME="My"
 # Active (focused) workspace
 WORKSPACE_NAME="Custom"
+# Keep the tab this script is run from
+KEEP_CURRENT_PANE=false
 
 
 # ==========================================
@@ -114,6 +116,9 @@ TABS=(
     TAB3
 )
 
+# Tab to focus after setup. Must match a tab config name (e.g. TAB1). Leave empty to not change focus.
+FOCUS_TAB="TAB3"
+
 
 # ==========================================
 # Helpers
@@ -139,6 +144,9 @@ get_workspace() {
 
     WORKSPACE_ID=$(echo "$WORKSPACE_JSON" | jq -r \
         '.result.workspaces[] | select(.focused == true) | .workspace_id')
+
+    CURRENT_TAB_ID=$(echo "$WORKSPACE_JSON" | jq -r \
+        '.result.workspaces[] | select(.focused == true) | .active_tab_id')
 
     if [[ -z "$WORKSPACE_ID" || "$WORKSPACE_ID" == "null" ]]; then
         echo "Failed to find active workspace"
@@ -212,6 +220,10 @@ create_tab() {
         exit 1
     fi
 
+    if [[ "$1" == "$FOCUS_TAB" ]]; then
+        FOCUS_TAB_ID=$(echo "$TAB_RESULT" | jq -r '.result.root_pane.tab_id')
+    fi
+
     COMMAND=$(build_command "$1")
 
     echo "Pane: $PANE_ID"
@@ -278,11 +290,47 @@ get_workspace
 rename_workspace
 
 
+echo "Saving pre-existing tab IDs..."
+
+EXISTING_TAB_IDS=$(herdr tab list --workspace "$WORKSPACE_ID" | jq -r '.result.tabs[].tab_id')
+
+
+FOCUS_TAB_ID=""
+
 for tab_config in "${TABS[@]}"; do
     create_tab "$tab_config"
 done
 
 
 echo
+echo "Closing pre-existing tabs..."
+
+for tab_id in $EXISTING_TAB_IDS; do
+    if [[ "$tab_id" == "$CURRENT_TAB_ID" ]]; then
+        continue
+    fi
+    echo "  Closing tab: $tab_id"
+    herdr tab close "$tab_id"
+done
+
+
+if [[ -n "$FOCUS_TAB_ID" ]]; then
+    echo
+    echo "Focusing tab: $FOCUS_TAB ($FOCUS_TAB_ID)"
+    herdr tab focus "$FOCUS_TAB_ID"
+else
+    echo
+    echo "WARNING: FOCUS_TAB_ID is empty (FOCUS_TAB='$FOCUS_TAB')"
+fi
+
+
+if [[ "$KEEP_CURRENT_PANE" == "false" ]]; then
+    echo "Closing current tab: $CURRENT_TAB_ID"
+    herdr tab close "$CURRENT_TAB_ID"
+fi
+
+
+echo
 echo "Done."
+
 
