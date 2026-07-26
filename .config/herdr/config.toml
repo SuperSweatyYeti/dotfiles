@@ -19,10 +19,10 @@ auto_switch = false
 reload_config = ["prefix+shift+r"]
 
 # Navigation
-focus_pane_left = ["prefix+h", "alt+shift+h"]
-focus_pane_right = ["prefix+l", "alt+shift+l"]
-focus_pane_down = ["prefix+j", "alt+shift+j"]
-focus_pane_up = ["prefix+k", "alt+shift+k"]
+# focus_pane_left = ["prefix+h", "ctrl+h"]
+# focus_pane_right = ["prefix+l", "ctrl+l"]
+# focus_pane_down = ["prefix+j", "ctrl+j"]
+# focus_pane_up = ["prefix+k", "ctrl+k"]
 
 # Sidebar
 toggle_sidebar = ["prefix+b", "alt+shift+b"]
@@ -37,3 +37,30 @@ detach = ["prefix+q", "prefix+d"]
 
 [experimental]
 kitty_graphics = true
+
+
+# Plugin Stuff
+# herdr nvim navigation
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"

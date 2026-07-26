@@ -46,6 +46,9 @@ cp "$nmcli_try_completions_file" "$bash_completion_dir"
 sudo mkdir -p /etc/keyd
 sudo ln -sf ~/dotfiles/keyd.conf /etc/keyd/default.conf
 
+# For user systemd scripts that we want always on
+loginctl enable-linger $USER
+
 # Setup tailscale prefer local routes when overlapping fix
 # TODO
 echo "Setting up tailscale prefer local routes systemd service.."
