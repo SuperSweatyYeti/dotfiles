@@ -3,7 +3,7 @@
 --ignore=setup.sh
 --ignore=keyd.conf
 --ignore=fonts.sh
---ignore=herdr.sh
+--ignore=herdr-workspace-setup.sh
 --ignore=brave-setup.sh
 --ignore=tailscale-prefer-local-routes
 --ignore=tailscale-prefer-local-routes/.*
