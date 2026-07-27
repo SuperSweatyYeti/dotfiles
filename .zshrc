@@ -30,35 +30,35 @@ export PATH
 # alias for rmpc ( Terminal music player ) launch with
 # no album art config
 if command -v rmpc &>/dev/null; then
-  alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+    alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
 fi
 
 # alias for volume ( change default audio device volume )
 if command -v wpctl &>/dev/null; then
-  alias vol-up="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-  alias vol-down="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-  # Set Volume from 0.0 - 1.0
-  vol-set() {
-  if [ -z "$1" ]; then
-    echo "Usage: wpctl-vol-set <0-100>"
-    return 1
-  fi
+    alias vol-up="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+    alias vol-down="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    # Set Volume from 0.0 - 1.0
+    vol-set() {
+        if [ -z "$1" ]; then
+            echo "Usage: wpctl-vol-set <0-100>"
+            return 1
+        fi
 
-  if [ "$1" -lt 0 ] || [ "$1" -gt 100 ]; then
-    echo "Error: value must be between 0 and 100"
-    return 1
-  fi
+        if [ "$1" -lt 0 ] || [ "$1" -gt 100 ]; then
+            echo "Error: value must be between 0 and 100"
+            return 1
+        fi
 
-  vol=$(awk "BEGIN { printf \"%.2f\", $1 / 100 }")
-  wpctl set-volume @DEFAULT_AUDIO_SINK@ "$vol"
-}
+        vol=$(awk "BEGIN { printf \"%.2f\", $1 / 100 }")
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ "$vol"
+    }
 fi
 
 # alias for volume control TUI
 if command -v wiremix &>/dev/null; then
-  vol-control() {
-    wiremix
-  }
+    vol-control() {
+        wiremix
+    }
 fi
 
 # aliases for obsidian headless sync
@@ -105,15 +105,15 @@ local bash_completion_dir="$HOME/.local/share/bash-completion/completions"
 mkdir -p "$bash_completion_dir"
 
 if [[ -d "$bash_completion_dir" ]]; then
-  for file in "$bash_completion_dir"/*; do
-    [[ -f "$file" ]] && source "$file"
-  done
+    for file in "$bash_completion_dir"/*; do
+        [[ -f "$file" ]] && source "$file"
+    done
 fi
 
 # This script needs to be run as sudo
 local nmcli_try_file="$HOME/.config/bashrc-plus/nmcli-try"
 if [[ -f "$nmcli_try_file" ]]; then
-  alias nmcli-try="sudo ${nmcli_try_file}"
+    alias nmcli-try="sudo ${nmcli_try_file}"
 fi
 
 
@@ -128,23 +128,23 @@ fi
 # Some commands don't output their headers if they are being piped
 # Example: flatpak list
 outty() {
-  if [[ $# -eq 0 ]]; then
-    echo "Usage: outty COMMAND [ARGS]"
-    echo "Runs COMMAND in a pseudo-terminal to preserve headers"
-    return 1
-  fi
-  
-  # Use either script, unbuffer, or stdbuf
-  if command -v script &>/dev/null; then
-    script -qc "$*" /dev/null
-  elif command -v unbuffer &>/dev/null; then
-    unbuffer "$@"
-  elif command -v stdbuf &>/dev/null; then
-    stdbuf -i0 -o0 -e0 "$@"
-  else
-    echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
-    return 1
-  fi
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: outty COMMAND [ARGS]"
+        echo "Runs COMMAND in a pseudo-terminal to preserve headers"
+        return 1
+    fi
+
+    # Use either script, unbuffer, or stdbuf
+    if command -v script &>/dev/null; then
+        script -qc "$*" /dev/null
+    elif command -v unbuffer &>/dev/null; then
+        unbuffer "$@"
+    elif command -v stdbuf &>/dev/null; then
+        stdbuf -i0 -o0 -e0 "$@"
+    else
+        echo "Error: No TTY emulation tool found. Install 'util-linux' for script or 'expect' for unbuffer."
+        return 1
+    fi
 }
 
 # Cheat function to curl for examples of a command using https://cheat.sh
@@ -180,97 +180,97 @@ fi
 # Switch display managers either sddm or gdm
 ########################################################
 switchdm-gdm() {
-  local GDMservice="gdm.service"
-  local SDDMservice="sddm.service"
+    local GDMservice="gdm.service"
+    local SDDMservice="sddm.service"
 
-  service_exists() {
-    local svc="$1"
-    [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
-  }
+    service_exists() {
+        local svc="$1"
+        [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
+    }
 
-  is_enabled() {
-    local svc="$1"
-    systemctl is-enabled "$svc" >/dev/null 2>&1
-  }
+    is_enabled() {
+        local svc="$1"
+        systemctl is-enabled "$svc" >/dev/null 2>&1
+    }
 
-  is_active() {
-    local svc="$1"
-    systemctl is-active "$svc" >/dev/null 2>&1
-  }
+    is_active() {
+        local svc="$1"
+        systemctl is-active "$svc" >/dev/null 2>&1
+    }
 
-  if ! service_exists "$GDMservice"; then
-    echo "$GDMservice does not exist."
-    return 1
-  fi
-
-  # Already on gdm (enabled + active)
-  if is_enabled "$GDMservice" && is_active "$GDMservice"; then
-    echo "$GDMservice is already enabled and active."
-    return 0
-  fi
-
-  # If sddm exists and is enabled/active, turn it off first
-  if service_exists "$SDDMservice"; then
-    if is_active "$SDDMservice"; then
-      sudo systemctl stop "$SDDMservice"
+    if ! service_exists "$GDMservice"; then
+        echo "$GDMservice does not exist."
+        return 1
     fi
-    if is_enabled "$SDDMservice"; then
-      sudo systemctl disable "$SDDMservice"
+
+    # Already on gdm (enabled + active)
+    if is_enabled "$GDMservice" && is_active "$GDMservice"; then
+        echo "$GDMservice is already enabled and active."
+        return 0
     fi
-  fi
 
-  sudo systemctl enable "$GDMservice"
-  sudo systemctl start "$GDMservice"
+    # If sddm exists and is enabled/active, turn it off first
+    if service_exists "$SDDMservice"; then
+        if is_active "$SDDMservice"; then
+            sudo systemctl stop "$SDDMservice"
+        fi
+        if is_enabled "$SDDMservice"; then
+            sudo systemctl disable "$SDDMservice"
+        fi
+    fi
 
-  echo "Switched to $GDMservice."
-  echo "If needed: sudo systemctl restart display-manager"
+    sudo systemctl enable "$GDMservice"
+    sudo systemctl start "$GDMservice"
+
+    echo "Switched to $GDMservice."
+    echo "If needed: sudo systemctl restart display-manager"
 }
 
 switchdm-sddm() {
-  local GDMservice="gdm.service"
-  local SDDMservice="sddm.service"
+    local GDMservice="gdm.service"
+    local SDDMservice="sddm.service"
 
-  service_exists() {
-    local svc="$1"
-    [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
-  }
+    service_exists() {
+        local svc="$1"
+        [[ "$(systemctl show -p LoadState --value "$svc" 2>/dev/null || true)" != "not-found" ]]
+    }
 
-  is_enabled() {
-    local svc="$1"
-    systemctl is-enabled "$svc" >/dev/null 2>&1
-  }
+    is_enabled() {
+        local svc="$1"
+        systemctl is-enabled "$svc" >/dev/null 2>&1
+    }
 
-  is_active() {
-    local svc="$1"
-    systemctl is-active "$svc" >/dev/null 2>&1
-  }
+    is_active() {
+        local svc="$1"
+        systemctl is-active "$svc" >/dev/null 2>&1
+    }
 
-  if ! service_exists "$SDDMservice"; then
-    echo "$SDDMservice does not exist."
-    return 1
-  fi
-
-  # Already on sddm (enabled + active)
-  if is_enabled "$SDDMservice" && is_active "$SDDMservice"; then
-    echo "$SDDMservice is already enabled and active."
-    return 0
-  fi
-
-  # If gdm exists and is enabled/active, turn it off first
-  if service_exists "$GDMservice"; then
-    if is_active "$GDMservice"; then
-      sudo systemctl stop "$GDMservice"
+    if ! service_exists "$SDDMservice"; then
+        echo "$SDDMservice does not exist."
+        return 1
     fi
-    if is_enabled "$GDMservice"; then
-      sudo systemctl disable "$GDMservice"
+
+    # Already on sddm (enabled + active)
+    if is_enabled "$SDDMservice" && is_active "$SDDMservice"; then
+        echo "$SDDMservice is already enabled and active."
+        return 0
     fi
-  fi
 
-  sudo systemctl enable "$SDDMservice"
-  sudo systemctl start "$SDDMservice"
+    # If gdm exists and is enabled/active, turn it off first
+    if service_exists "$GDMservice"; then
+        if is_active "$GDMservice"; then
+            sudo systemctl stop "$GDMservice"
+        fi
+        if is_enabled "$GDMservice"; then
+            sudo systemctl disable "$GDMservice"
+        fi
+    fi
 
-  echo "Switched to $SDDMservice."
-  echo "If needed: sudo systemctl restart display-manager"
+    sudo systemctl enable "$SDDMservice"
+    sudo systemctl start "$SDDMservice"
+
+    echo "Switched to $SDDMservice."
+    echo "If needed: sudo systemctl restart display-manager"
 }
 
 
@@ -288,7 +288,7 @@ if lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sUbuntu"; then
         fi
     fi
 
-# IF we are Debian
+    # IF we are Debian
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
     alias sudoedit='sudo -E -s $EDITOR'
     # IF fzf is installed then
@@ -298,7 +298,7 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
         fi
     fi
 
-# IF we are Fedora
+    # IF we are Fedora
 elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
     # sudoedit() {
     #   sudo XDG_CONFIG_HOME="$HOME/.config"
@@ -316,11 +316,11 @@ elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
             source /usr/share/fzf/shell/key-bindings.zsh
         fi
     fi
-# IF we are NixOS
+    # IF we are NixOS
 elif lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS"; then
     if [ -n "${commands[fzf-share]}" ]; then
-      source "$(fzf-share)/key-bindings.zsh"
-      source "$(fzf-share)/completion.zsh"
+        source "$(fzf-share)/key-bindings.zsh"
+        source "$(fzf-share)/completion.zsh"
     fi
 else
     : # do nothing
@@ -328,9 +328,9 @@ fi
 
 # fzf find hidden alias using find
 if command -v fzf &>/dev/null; then
-  fzf-hidden() {
-    find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf 
-  }
+    fzf-hidden() {
+        find . -type f \( -path "*/.git/*" -prune -o -print \) 2>/dev/null | fzf
+    }
 fi
 
 # If lsd is installed then use that for nicer listings
@@ -376,7 +376,7 @@ if command -v fzf &>/dev/null; then
     }
 
     alias cdfz='cd $(find . -type d -print | fzf  ) '
-    
+
     # Load fzf ZSH completion and key bindings
     if [ -f /usr/share/fzf/completion.zsh ]; then
         source /usr/share/fzf/completion.zsh
@@ -745,7 +745,7 @@ if command -v yazi &>/dev/null; then
     # cd into directory when leaving yazi
     function cdyazi() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-        
+
         # Filter out --cwd-file from the arguments passed to yazi, if present
         local args=()
         for arg in "$@"; do
@@ -753,19 +753,19 @@ if command -v yazi &>/dev/null; then
                 args+=("$arg")
             fi
         done
-        
+
         # Now call yazi with the modified args and add --cwd-file="$tmp" once
         yazi "${args[@]}" --cwd-file="$tmp"
-        
+
         # Handle cwd change
         if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
             builtin cd -- "$cwd"
         fi
-        
+
         # Clean up the temporary file
         rm -f -- "$tmp"
     }
-    
+
     alias y='yazi'
     alias cdy='cdyazi'
 fi
@@ -799,7 +799,7 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
         # cd into directory when leaving yazi
         function cdyazi() {
             local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-            
+
             # Filter out --cwd-file from the arguments passed to yazi, if present
             local args=()
             for arg in "$@"; do
@@ -807,25 +807,25 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
                     args+=("$arg")
                 fi
             done
-            
+
             # Now call yazi with the modified args and add --cwd-file="$tmp" once
             yazi "${args[@]}" --cwd-file="$tmp"
-            
+
             # Handle cwd change
             if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
                 builtin cd -- "$cwd"
             fi
-            
+
             # Clean up the temporary file
             rm -f -- "$tmp"
         }
-        
+
         alias y='yazi'
         alias cdy='cdyazi'
     fi
 fi
 
-# Carapace shell completion 
+# Carapace shell completion
 if command -v "carapace" &>/dev/null; then
     export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense,nu' # optional
     source <(carapace _carapace)
@@ -833,7 +833,7 @@ if command -v "carapace" &>/dev/null; then
     export CARAPACE_LENIENT=1
 fi
 
-# Need to put this section after BREW in case neovim 
+# Need to put this section after BREW in case neovim
 # is installed via homebrew
 # Set default editor
 if command -v nvim &>/dev/null; then
@@ -946,13 +946,13 @@ fi
 error_status_prompt_color() {
     if [[ $? -eq 0 || $? -eq 130 ]]; then
         export PROMPT=$'╰─ $(python_venv_prompt)%{${COLOR6}%} ❯%{${RESET}%} '
-    else 
+    else
         export PROMPT=$'╰─ $(python_venv_prompt)%{${COLOR7}%} ❯%{${RESET}%} '
     fi
 }
 # Hook function into precmd so it runs before each prompt
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd error_status_prompt_color    
+add-zsh-hook precmd error_status_prompt_color
 
 
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
@@ -984,7 +984,7 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
             fi
         fi
 
-    # IF we are Debian
+        # IF we are Debian
     elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sDebian"; then
         alias sudoedit='sudo -E -s $EDITOR'
         # IF fzf is installed then
@@ -995,7 +995,7 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
                 ')
             fi
         fi
-    # IF we are Fedora
+        # IF we are Fedora
     elif lsb_release -a 2>/dev/null | grep -qiE "Distributor\sID:\sFedora"; then
         # IF fzf is installed then
         if command -v fzf &>/dev/null; then
@@ -1005,10 +1005,10 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
                 ')
             fi
         fi
-    # IF we are NixOS
+        # IF we are NixOS
     elif lsb_release -a 2>/dev/null | grep -q "Distributor\sID:\sNixOS"; then
         if [ -n "${commands[fzf-share]}" ]; then
-        zvm_after_init_commands+=('
+            zvm_after_init_commands+=('
           source "$(fzf-share)/key-bindings.zsh"
           source "$(fzf-share)/completion.zsh"
         ')
@@ -1031,26 +1031,26 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
     # when using the 'c' vim motions like 'cw' 'ciw' 'cW' 'caw' etc.
     #### START
     function zvm_after_select_vi_mode() {
-      # Force redraw prompt when the vi mode changes
-      zle reset-prompt
+        # Force redraw prompt when the vi mode changes
+        zle reset-prompt
     }
 
     # Add this handler to ensure change operations enter insert mode correctly
     function zvm_change_handler() {
-      # Make sure we're in insert mode after completing a change operation
-      zvm_select_vi_mode $ZVM_MODE_INSERT
+        # Make sure we're in insert mode after completing a change operation
+        zvm_select_vi_mode $ZVM_MODE_INSERT
     }
 
     # Register the change handler function with the plugin's hooks
     function zvm_after_init() {
-      # Hook into the various change operations
-      local original_widget
-      for cmd in vi-change{,-eol,-whole-line} vi-substitute{,-whole-line}; do
-        if (( $+widgets[$cmd] )); then
-          original_widget="${widgets[$cmd]#user:}"
-          zle -N $cmd zvm_change_handler
-        fi
-      done
+        # Hook into the various change operations
+        local original_widget
+        for cmd in vi-change{,-eol,-whole-line} vi-substitute{,-whole-line}; do
+            if (( $+widgets[$cmd] )); then
+                original_widget="${widgets[$cmd]#user:}"
+                zle -N $cmd zvm_change_handler
+            fi
+        done
     }
     #### END
 
@@ -1058,13 +1058,13 @@ if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>
     error_status_prompt_color() {
         if [[ $? -eq 0 || $? -eq 130 ]]; then
             export PROMPT=$'╰─ $(python_venv_prompt)[%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR6}%} ❯%{${RESET}%} '
-        else 
+        else
             export PROMPT=$'╰─ $(python_venv_prompt)[%{${COLOR4}%}${ZVM_MODE:u}%{${RESET}%}]%{${COLOR7}%} ❯%{${RESET}%} '
         fi
     }
     # Hook function into precmd so it runs before each prompt
     autoload -Uz add-zsh-hook
-    add-zsh-hook precmd error_status_prompt_color    
+    add-zsh-hook precmd error_status_prompt_color
 fi
 
 # fzf default keybinds use ctrl-y to accept
@@ -1107,7 +1107,7 @@ bindkey -M menuselect '^Y' accept-search
 
 # zoxide config
 if command -v rmpc &>/dev/null; then
-  # To initialize zoxide, add this to your shell configuration file (usually ~/.zshrc):
-  eval "$(zoxide init zsh)"
+    # To initialize zoxide, add this to your shell configuration file (usually ~/.zshrc):
+    eval "$(zoxide init zsh)"
 fi
 
