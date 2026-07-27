@@ -531,47 +531,18 @@ if command -v herdr &>/dev/null; then
     DEFAULT_HERDR_SESSION_CUSTOM_NAME="My"
 
     herdr() {
-        # No arguments:
-        #   Attach to default session unless already inside one
-        if [[ $# -eq 0 ]]; then
-            if [[ -n "${HERDR_SESSION:-}" ]]; then
-                echo "Already inside Herdr session: ${HERDR_SESSION}"
-                return 0
-            fi
-
-            command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
-            return $?
-        fi
-
-
-        # Session commands should always pass through
-        case "$1" in
-            session|server|completion|update|channel|config|plugin)
-                command herdr "$@"
-                return $?
-                ;;
-        esac
-
-
-        # If already inside a session, use normal CLI behavior
-        if [[ -n "${HERDR_SESSION:-}" ]]; then
+        # IF number of arguments greater than 0 and command is "herdr"
+        [[ $# -gt 0 ]] && {
             command herdr "$@"
-            return $?
-        fi
+            return
+        }
+        # If already in a herdr session
+        [[ -n "${HERDR_SESSION:-}" ]] && {
+            echo "Already inside Herdr session: ${HERDR_SESSION}"
+            return
+        }
 
-
-        # If outside a session:
-        # workspace/tab/pane/etc need a session context
-        case "$1" in
-            workspace|tab|pane|agent|notification|worktree|api)
-                command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}" "$@"
-                return $?
-                ;;
-            *)
-                command herdr "$@"
-                return $?
-                ;;
-        esac
+        command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
     }
 
 
