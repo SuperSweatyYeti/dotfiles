@@ -62,6 +62,8 @@ shell-integration-features = no-cursor
 cursor-opacity = 0.9
 cursor-style = block
 cursor-style-blink = true
+custom-shader = ~/.config/ghostty/shaders/cursor_smear_fade.glsl
+custom-shader-animation = true
 
 # Keybinds
 keybind = ctrl+,=unbind
