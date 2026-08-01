@@ -5,8 +5,13 @@ set -euo pipefail
 # Script to detect if we are connected to our HOME LAN and prefer the locally
 # connected route over the route provided by Tailscale.
 
-RULE_PREF=5269
+RULE_PREF=100
 TRUSTED_LAN_CURL_QUERY="pfSense-CL3DMA"
+
+log() {
+    echo "$*" >&2
+    logger -t tailscale-prefer-local-routes "$*"
+}
 
 cleanup() {
     if ip rule show pref "$RULE_PREF" | grep -q .; then
@@ -15,10 +20,18 @@ cleanup() {
     fi
 }
 
-log() {
-    echo "$*" >&2
-    logger -t tailscale-prefer-local-routes "$*"
-}
+case "${1:-reconcile}" in
+    reconcile)
+        ;;
+    cleanup)
+        cleanup
+        exit 0
+        ;;
+    *)
+        echo "Usage: $0 [reconcile|cleanup]" >&2
+        exit 2
+        ;;
+esac
 
 # Tailscale must be running
 if [[ "$(tailscale status --json | jq -r '.BackendState')" != "Running" ]]; then
@@ -60,8 +73,9 @@ while read -r subnet _ dev _; do
     fi
 
     log "Verifying trusted gateway $gateway via curl..."
+
     if curl -ks --connect-timeout 2 "https://${gateway}/" |
-        grep -q "${TRUSTED_LAN_CURL_QUERY}"; then
+        grep -q "$TRUSTED_LAN_CURL_QUERY"; then
 
         ip rule del pref "$RULE_PREF" 2>/dev/null || true
         ip rule add pref "$RULE_PREF" to "$subnet" lookup main
