@@ -25,14 +25,12 @@ if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
 fi
 export PATH
 
-
 # Add custom bash scripts to PATH
 BASH_SCRIPTS_PATH="$HOME/.config/bashrc-plus"
 if [[ ! "$PATH" =~ "$BASH_SCRIPTS_PATH" ]]; then
     PATH="$BASH_SCRIPTS_PATH:$PATH"
 fi
 export PATH
-
 
 # Load user bash completion files
 bash_completion_dir="$HOME/.local/share/bash-completion/completions"
@@ -41,17 +39,16 @@ bash_completion_dir="$HOME/.local/share/bash-completion/completions"
 mkdir -p "$bash_completion_dir"
 
 if [[ -d "$bash_completion_dir" ]]; then
-  for file in "$bash_completion_dir"/*; do
-    [[ -f "$file" ]] && source "$file"
-  done
+    for file in "$bash_completion_dir"/*; do
+        [[ -f "$file" ]] && source "$file"
+    done
 fi
 
 # This script needs to be run as sudo
 nmcli_try_file="$HOME/.config/bashrc-plus/nmcli-try"
 if [[ -f "$nmcli_try_file" ]]; then
-  alias nmcli-try="sudo ${nmcli_try_file}"
+    alias nmcli-try="sudo ${nmcli_try_file}"
 fi
-
 
 # alias for rmpc ( Terminal music player ) launch with
 # no album art config
@@ -486,6 +483,13 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
     if command -v lazydocker &>/dev/null; then
         alias ldoc='lazydocker'
     fi
+
+    # alias for rmpc ( Terminal music player ) launch with
+    # no album art config
+    if command -v rmpc &>/dev/null; then
+        alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+    fi
+
     # Yazi config
     # ONLY if yazi is installed using brew
     if command -v yazi &>/dev/null; then
@@ -545,12 +549,10 @@ if command -v herdr &>/dev/null; then
         command herdr session attach "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
     }
 
-
     herdr-kill() {
         command herdr session stop "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
         command herdr session delete "${DEFAULT_HERDR_SESSION_CUSTOM_NAME}"
     }
-
 
     herdr-stop() {
         command herdr server stop
@@ -564,4 +566,3 @@ if [[ ! "$FZF_DEFAULT_OPTS" =~ "--bind=ctrl-y:accept" ]]; then
     FZF_DEFAULT_OPTS="--bind=ctrl-y:accept ${FZF_DEFAULT_OPTS}"
 fi
 export FZF_DEFAULT_OPTS
-

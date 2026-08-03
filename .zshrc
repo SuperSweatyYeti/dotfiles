@@ -789,10 +789,17 @@ if command -v "/home/linuxbrew/.linuxbrew/bin/brew" &>/dev/null; then
     if command -v lazydocker &>/dev/null; then
         alias ldoc='lazydocker'
     fi
-    # IF superfile is installed
+
     if command -v spf &>/dev/null; then
         alias superfile='spf'
     fi
+
+    # alias for rmpc ( Terminal music player ) launch with
+    # no album art config
+    if command -v rmpc &>/dev/null; then
+        alias rmpc-noart="rmpc -c '$HOME/.config/rmpc/config-noart.ron'"
+    fi
+
     # Yazi config
     # ONLY if yazi is installed through brew
     if command -v yazi &>/dev/null; then
