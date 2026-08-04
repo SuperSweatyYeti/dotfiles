@@ -181,7 +181,7 @@ fi
 ########################################################
 switchdm-gdm() {
     local GDMservice="gdm.service"
-    local SDDMservice="sddm.service"
+    local PLASMALOGINservice="plasmalogin.service"
 
     service_exists() {
         local svc="$1"
@@ -210,12 +210,12 @@ switchdm-gdm() {
     fi
 
     # If sddm exists and is enabled/active, turn it off first
-    if service_exists "$SDDMservice"; then
-        if is_active "$SDDMservice"; then
-            sudo systemctl stop "$SDDMservice"
+    if service_exists "$PLASMALOGINservice"; then
+        if is_active "$PLASMALOGINservice"; then
+            sudo systemctl stop "$PLASMALOGINservice"
         fi
-        if is_enabled "$SDDMservice"; then
-            sudo systemctl disable "$SDDMservice"
+        if is_enabled "$PLASMALOGINservice"; then
+            sudo systemctl disable "$PLASMALOGINservice"
         fi
     fi
 
@@ -228,7 +228,7 @@ switchdm-gdm() {
 
 switchdm-sddm() {
     local GDMservice="gdm.service"
-    local SDDMservice="sddm.service"
+    local PLASMALOGINservice="plasmalogin.service"
 
     service_exists() {
         local svc="$1"
@@ -245,14 +245,14 @@ switchdm-sddm() {
         systemctl is-active "$svc" >/dev/null 2>&1
     }
 
-    if ! service_exists "$SDDMservice"; then
-        echo "$SDDMservice does not exist."
+    if ! service_exists "$PLASMALOGINservice"; then
+        echo "$PLASMALOGINservice does not exist."
         return 1
     fi
 
     # Already on sddm (enabled + active)
-    if is_enabled "$SDDMservice" && is_active "$SDDMservice"; then
-        echo "$SDDMservice is already enabled and active."
+    if is_enabled "$PLASMALOGINservice" && is_active "$PLASMALOGINservice"; then
+        echo "$PLASMALOGINservice is already enabled and active."
         return 0
     fi
 
@@ -266,10 +266,10 @@ switchdm-sddm() {
         fi
     fi
 
-    sudo systemctl enable "$SDDMservice"
-    sudo systemctl start "$SDDMservice"
+    sudo systemctl enable "$PLASMALOGINservice"
+    sudo systemctl start "$PLASMALOGINservice"
 
-    echo "Switched to $SDDMservice."
+    echo "Switched to $PLASMALOGINservice."
     echo "If needed: sudo systemctl restart display-manager"
 }
 
@@ -1112,9 +1112,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect '^Y' accept-search
 
 
-# zoxide config
-if command -v rmpc &>/dev/null; then
-    # To initialize zoxide, add this to your shell configuration file (usually ~/.zshrc):
-    eval "$(zoxide init zsh)"
-fi
+# To initialize zoxide, add this to your shell configuration file (usually ~/.zshrc):
+eval "$(zoxide init zsh)"
+
 

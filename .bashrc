@@ -566,3 +566,7 @@ if [[ ! "$FZF_DEFAULT_OPTS" =~ "--bind=ctrl-y:accept" ]]; then
     FZF_DEFAULT_OPTS="--bind=ctrl-y:accept ${FZF_DEFAULT_OPTS}"
 fi
 export FZF_DEFAULT_OPTS
+
+# To initialize zoxide, add this to your shell configuration file (usually ~/.bashrc):
+eval "$(zoxide init bash)"
+
