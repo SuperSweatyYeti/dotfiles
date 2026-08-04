@@ -226,7 +226,7 @@ switchdm-gdm() {
     echo "If needed: sudo systemctl restart display-manager"
 }
 
-switchdm-sddm() {
+switchdm-plasmalogin() {
     local GDMservice="gdm.service"
     local PLASMALOGINservice="plasmalogin.service"
 
