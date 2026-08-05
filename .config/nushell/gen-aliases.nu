@@ -23,3 +23,5 @@ if not (which lazygit | is-empty) {
 # Regular aliases
 
 alias ll = ls -al
+
+
