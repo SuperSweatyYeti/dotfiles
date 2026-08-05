@@ -8,4 +8,4 @@
 --ignore=tailscale-prefer-local-routes
 --ignore=tailscale-prefer-local-routes/.*
 --ignore=.config/systemd/user/*.wants
---ignore=.config/systemd/user/*.wants/.*
+--ignore=^\.config/systemd/user/.*\.wants(/.*)?$
