@@ -963,6 +963,10 @@ add-zsh-hook precmd error_status_prompt_color
 
 
 if source ~/.config/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh >/dev/null 2>&1  ; then
+    # How long to wait for next key if possible command
+    ZVM_KEYTIMEOUT=0.3
+
+    ZVM_VI_INSERT_ESCAPE_BINDKEY=JJ
     # zsh-vi-mode plugin config
     ## Escape key
     ZVM_VI_INSERT_ESCAPE_BINDKEY=JJ

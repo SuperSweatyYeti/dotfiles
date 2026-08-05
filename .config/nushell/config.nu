@@ -12,6 +12,11 @@ source ~/.config/nushell/gen-aliases.nu
 # Load generated aliases
 source ~/.config/nushell/aliases.nu
 
+
+# =====================================
+# Functions
+# =====================================
+
 # =====================================
 # rmpc
 # =====================================
@@ -247,23 +252,22 @@ $env.PROMPT_COMMAND = {||
     )
 
 
-    $"\n╭╴($user)(ansi yellow)@(ansi reset)($host) ($dir)(git_prompt)\n╰─ (python_prompt)"
+    $"\n(ansi white)╭╴(ansi reset)($user)(ansi yellow)@(ansi reset)($host) ($dir)(git_prompt)\n╰─ (python_prompt)"
 }
 
 
 
 $env.PROMPT_INDICATOR = {||
-    "[nu] ❯ "
+    $"(ansi green)\(nu\)(ansi reset) ❯ "
 }
 
 
 $env.PROMPT_INDICATOR_VI_INSERT = {||
-    "❯ "
+    $"(ansi green)\(nu\)(ansi reset) (ansi green)[I](ansi reset) ❯ "
 }
 
-
 $env.PROMPT_INDICATOR_VI_NORMAL = {||
-    "▶ "
+    $"(ansi green)\(nu\)(ansi reset) (ansi yellow)[N](ansi reset) ❯ "
 }
 
 
