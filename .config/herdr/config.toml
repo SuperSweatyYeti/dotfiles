@@ -29,15 +29,15 @@ split_vertical = ["prefix+v",'prefix+"']
 split_horizontal = ["prefix+-","prefix+%"]
 
 # Activate resize mode
-resize_mode = ["prefix+r", "alt+shift+h","alt+shift+j","alt+shift+k","alt+shift+l"]
+resize_mode = ["prefix+r"]
 
 # Sidebar
 toggle_sidebar = ["prefix+b", "alt+shift+b"]
 
 # Tabs
 new_tab = ["prefix+c", "alt+n"]
-next_tab = ["prefix+n"]
-previous_tab = ["prefix+p"]
+next_tab = ["prefix+n","shift+alt+l"]
+previous_tab = ["prefix+p","shift+alt+h"]
 switch_tab = ["prefix+1..9", "alt+shift+1..9"] # Switch to tab 1..9
 
 detach = ["prefix+q", "prefix+d"]

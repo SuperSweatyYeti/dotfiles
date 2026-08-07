@@ -321,7 +321,7 @@ $env.config.keybindings ++= [
   }
 ]
 
-$env.config.edit_mode = "vi"
+#$env.config.edit_mode = "vi"
 
 # =====================================
 # KDE logout
