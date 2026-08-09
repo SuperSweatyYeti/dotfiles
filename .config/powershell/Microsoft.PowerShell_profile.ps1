@@ -338,7 +338,7 @@ function prompt {
         Write-Host ""
         $promptColor = if ($lastSuccess) { "Green" } else { "Red" }
         Write-Host "╰─ " -NoNewline -ForegroundColor White
-        Write-Host "❯" -NoNewline -ForegroundColor $promptColor
+        Write-Host "[PS] ❯" -NoNewline -ForegroundColor $promptColor
 
         # Fire off chezmoi background check for next prompt (non-blocking)
         Start-PromptBgCheck
@@ -346,7 +346,7 @@ function prompt {
         return " "
     }
     catch {
-        return "╰─ ❯ "
+        return "╰─ [PS] ❯ "
     }
 }
 
