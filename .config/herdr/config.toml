@@ -26,7 +26,7 @@ reload_config = ["prefix+shift+r"]
 
 # Split Panes
 split_vertical = ["prefix+v",'prefix+"']
-split_horizontal = ["prefix+-","prefix+%"]
+split_horizontal = ["prefix+h","prefix+-","prefix+%"]
 
 # Activate resize mode
 resize_mode = ["prefix+r"]
