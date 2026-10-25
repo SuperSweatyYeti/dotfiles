@@ -1,5 +1,5 @@
 [Unit]
-Description=Prefer locally connected routes over Tailscale routes when they overlap
+Description=Prefer locally connected routes over Tailscale routes when on trusted LAN
 After=network-online.target tailscaled.service
 Wants=network-online.target
 
