@@ -4,9 +4,14 @@ set -euo pipefail
 
 # Script to detect if we are connected to our HOME LAN and prefer the locally
 # connected route over the route provided by Tailscale.
+#
+# The override is only applied when BOTH are true:
+#   1. The default gateway on the interface equals GATEWAY_IP
+#   2. https://GATEWAY_IP/ returns a page containing TRUSTED_LAN_CURL_QUERY
 
 RULE_PREF=100
-TRUSTED_LAN_CURL_QUERY="pfSense-CL3DMA"
+GATEWAY_IP="192.168.22.1"
+TRUSTED_LAN_CURL_QUERY="OPNsense"
 
 log() {
     echo "$*" >&2
@@ -61,8 +66,14 @@ while read -r subnet _ dev _; do
 
     [[ -z "$gateway" ]] && continue
 
-    # Skip if Tailscale's table already routes this gateway (no conflict)
-    if ip route get "$gateway" table 52 >/dev/null 2>&1; then
+    # The gateway must be the one we defined, otherwise this is not our home LAN
+    if [[ "$gateway" != "$GATEWAY_IP" ]]; then
+        log "Gateway $gateway on $dev does not match expected $GATEWAY_IP, skipping."
+        continue
+    fi
+
+    # Skip if Tailscale's table does NOT route this gateway (no conflict)
+    if ! ip route get "$gateway" table 52 >/dev/null 2>&1; then
         continue
     fi
 
