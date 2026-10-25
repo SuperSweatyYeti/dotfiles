@@ -6,3 +6,6 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 ExecStart=/etc/tailscale/tailscale-prefer-local-routes.sh reconcile
+
+[Install]
+WantedBy=multi-user.target
