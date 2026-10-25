@@ -72,8 +72,9 @@ while read -r subnet _ dev _; do
         continue
     fi
 
-    # Skip if Tailscale's table does NOT route this gateway (no conflict)
-    if ! ip route get "$gateway" table 52 >/dev/null 2>&1; then
+    # Skip if Tailscale's table has no route for this subnet (no conflict)
+    if ! ip route show table 52 | awk '{print $1}' | grep -qxF "$subnet"; then
+        log "Tailscale has no route for $subnet, nothing to override."
         continue
     fi
 
