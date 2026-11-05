@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
 if ! systemctl --user is-active --quiet ydotool.service; then
+    echo "ydotool.service is not running"
+    echo "Make sure ydotool is installed and start with 'systemctl --user start ydotool.service'" >&2
+    echo "Attempting to Start Service..."
+    systemctl --user start ydotool.service
+    echo
+fi
+
+if ! systemctl --user is-active --quiet ydotool.service; then
+    echo
+    echo "Could not start ydotool user service..."
     echo "ydotool.service is not running" >&2
     echo "Make sure ydotool is installed and start with 'systemctl --user start ydotool.service'" >&2
-    exit 1
 fi
 
 DURATION_SECONDS=0

@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 prepend_keymap = [
 	{ on = "<C-h>", run = 'hidden toggle', desc = "Toggle hidden files" },
 	{ on = "?", run = 'help', desc = "Get help" },
@@ -6,8 +6,8 @@ prepend_keymap = [
 	{ on = "<Enter>", run = [ 'open' ], desc = "Open File" },
 	# DON'T Exit yazi after opening the selected file
 	{ on = "o", run = 'open' , desc = "Open File" },
-
 ]
+
 [help]
 prepend_keymap = [
 	{ on = "/", run = 'filter', desc = "Filter" },
