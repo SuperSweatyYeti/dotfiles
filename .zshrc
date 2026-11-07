@@ -19,6 +19,9 @@ if [[ ! "$PATH" =~ "$GO_BIN_PATH" ]]; then
 fi
 export PATH
 
+# Keep Claude Code config/state under XDG config dir
+export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/claude"
+
 # Add custom bash scripts to PATH
 BASH_SCRIPTS_PATH="$HOME/.config/bashrc-plus"
 if [[ ! "$PATH" =~ "$BASH_SCRIPTS_PATH" ]]; then

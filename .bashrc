@@ -11,6 +11,9 @@ if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 fi
 export PATH
 
+# Keep Claude Code config/state under XDG config dir
+export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/claude"
+
 # Add cargo binaries to path
 CARGO_BIN_PATH="$HOME/.cargo/bin"
 if [[ ! "$PATH" =~ "$CARGO_BIN_PATH" ]]; then
