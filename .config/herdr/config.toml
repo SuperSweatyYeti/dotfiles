@@ -1,15 +1,20 @@
 onboarding = false
-[ui.sound]
-enabled = false
 
 [ui]
 show_agent_labels_on_pane_borders = true
 sidebar_start_collapsed = true
-sidebar_collapsed_mode = "compact"
 # options "hidden" "compact"
+sidebar_collapsed_mode = "compact"
 mouse_capture = true
 pane_borders = true
 pane_gaps = false
+# options "dots" (color marks) "symbols" (distinct glyph per state)
+status_indicators = "symbols"
+# Notify when agents finish or need attention
+# options "off" "herdr" (in-app) "terminal" "system" (desktop)
+toast.delivery = "herdr"
+toast.herdr.position = "top-right"
+sound.enabled = false
 
 [theme]
 name = "catppuccin"
